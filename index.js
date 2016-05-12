@@ -80,11 +80,11 @@ function setDebugDraw(w){
     if(world !== null) {
         var debugDraw = new Box2D.JSDraw();
 
-        debugDraw.SetSprite(document.getElementById("canvas").getContext("2d"));
-        debugDraw.SetDrawScale(PTM_RATIO); // Set draw scale
-        debugDraw.SetFillAlpha(0.3);
-        debugDraw.SetLineThickness(1.0);
-        debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);
+        debugdraw.setsprite(document.getelementbyid("canvas").getcontext("2d"));
+        debugdraw.setdrawscale(ptm_ratio); // set draw scale
+        debugdraw.setfillalpha(0.3);
+        debugdraw.setlinethickness(1.0);
+        debugdraw.setflags(b2debugdraw.e_shapebit | b2debugdraw.e_jointbit);
     
         // set debug draw to the world
         w.SetDebugDraw(debugDraw); 
@@ -247,7 +247,7 @@ function init() {
 	world.CreateJoint(joint_def);
 
 	//setup debug draw
-    setDebugDraw(world)
+    //setDebugDraw(world)
 	
 	canvas.addEventListener('mousemove', function(e) {
 		   mouse_pos = getMousePos(this, e);
@@ -263,8 +263,8 @@ function init() {
 					// mouse joints bodyA can be *any* body in
 					// the world. I would use some static body.
 					// It is not allowed to be null or undefined.
-					def.bodyA( ceiling );
-					def.bodyB( body );
+					def.set_bodyA( ceiling );
+					def.set_bodyB( body );
 					def.set_target( b2d_pos );
 				   
 					// disable collision detection between
