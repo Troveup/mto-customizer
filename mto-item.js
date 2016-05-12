@@ -45,6 +45,11 @@ MTOItem.prototype.render = function() {
     this.drawCharms();
 }
 
+MTOItem.prototype.syncPhysics = function() {
+    this.iterateCharms(function(charm) {
+    }.bind(this));
+}
+
 MTOItem.prototype.drawCharms = function() {
     this.iterateCharms(function(charm) {
         // debug draw

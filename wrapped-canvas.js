@@ -94,3 +94,4 @@ WrappedCanvas.prototype.drawCenteredRectangle = function(x, y, width, height, st
 }
 
 module.exports = WrappedCanvas;
+
