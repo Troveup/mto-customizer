@@ -76,20 +76,20 @@ function createBox(w, h, x, y, type){
 	return b;
 }
 
-function setDebugDraw(w){
-    if(world !== null) {
-        var debugDraw = new Box2D.JSDraw();
+//function setDebugDraw(w){
+    //if(world !== null) {
+        //var debugDraw = new Box2D.JSDraw();
 
-        debugdraw.setsprite(document.getelementbyid("canvas").getcontext("2d"));
-        debugdraw.setdrawscale(ptm_ratio); // set draw scale
-        debugdraw.setfillalpha(0.3);
-        debugdraw.setlinethickness(1.0);
-        debugdraw.setflags(b2debugdraw.e_shapebit | b2debugdraw.e_jointbit);
+        //debugdraw.setsprite(document.getelementbyid("canvas").getcontext("2d"));
+        //debugdraw.setdrawscale(ptm_ratio); // set draw scale
+        //debugdraw.setfillalpha(0.3);
+        //debugdraw.setlinethickness(1.0);
+        //debugdraw.setflags(b2debugdraw.e_shapebit | b2debugdraw.e_jointbit);
     
-        // set debug draw to the world
-        w.SetDebugDraw(debugDraw); 
-    }
-}
+        //// set debug draw to the world
+        //w.SetDebugDraw(debugDraw); 
+    //}
+//}
 
 
 function getBodyAtMouse(includeStatic){
