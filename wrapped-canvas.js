@@ -3,7 +3,7 @@ var charmColors = {
     normal: '#F26868',
     selected: 'red',
     hanging: 'yellow'
-}
+};
 
 var anchorColors = {
     normal: 'black',
@@ -12,9 +12,54 @@ var anchorColors = {
 };
 
 
-function WrappedCanvas(canvasID) {
-    this.canvas = null;
-    this.context = null;
+function WrappedCanvas(canvasID = 'canvas') {
+    var cnv = document.getElementById(canvasID);
+    if (!cnv) {
+        console.warn("No usable canvas found with id: ", canvasID);
+        // TODO: create a canvas and attach to body
+    }
+
+    this.canvas = cnv;
+    this.context = cnv.getContext('2d');
+    
+    this.centerOrigin();
+    this.boundingRectangle = this.canvas.getBoundingClientRect();
+}
+
+WrappedCanvas.prototype.centerOrigin = function() {
+    var dx = this.canvas.width / 2;
+    var dy = this.canvas.height / 2;
+    this.setOrigin(dx, dy);
+};
+
+WrappedCanvas.prototype.setOrigin = function(xOffset, yOffset) {
+    this.context.scale(1, -1);
+    this.context.translate(xOffset, yOffset - this.canvas.height);
+ 
+    this.origin = { x: xOffset, y: yOffset };
+};
+
+WrappedCanvas.prototype.getTransformedCoords = function(clientX, clientY) {
+    return {
+        x: clientX - this.origin.x - this.boundingRectangle.left,
+        y: this.boundingRectangle.bottom - clientY - this.origin.y
+    };
+}
+
+WrappedCanvas.prototype.drawLine = function(x1, y1, x2, y2) {
+    this.context.beginPath();
+    this.context.moveTo(x1, y1);
+    this.context.lineTo(x2, y2);
+    this.context.stroke();
+}
+
+WrappedCanvas.prototype.drawGrid = function(xDelta, yDelta, stepSize) {
+    for (var x = 0; x < yDelta; x += stepSize) {
+        this.drawLine( x, 0, x, yDelta );
+    }
+    for (var y = 0; y < yDelta; y += stepSize) {
+        this.drawLine( 0, y, xDelta, y );
+    }
 }
 
 WrappedCanvas.prototype.drawCircle = function(x, y, radius, style) {

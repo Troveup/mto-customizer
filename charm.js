@@ -8,7 +8,7 @@ function Charm(spec) {
 
     if (spec.upperAnchor) {
         this.anchors.upper = {
-            debugStyle: anchorColors['normal'],
+            // debugStyle: anchorColors['normal'],
             offset: spec.upperAnchor,
             attachedComponent: null
         }
@@ -16,7 +16,7 @@ function Charm(spec) {
 
     if (spec.lowerAnchor) {
         this.anchors.lower = {
-            debugStyle: anchorColors['normal'],
+            // debugStyle: anchorColors['normal'],
             offset: spec.lowerAnchor,
             attachedComponent: null
         }

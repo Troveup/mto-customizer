@@ -1,9 +1,8 @@
 
-var Charm = require("./charm.js");
 var WrappedCanvas = require("./wrapped-canvas.js");
 var MTOItem = require("./mto-item.js");
-var Box2DHelper = require("./box2d-helper.js");
-var Anchor = require("./anchor.js");
+// var Box2DHelper = require("./box2d-helper.js");
+// var Anchor = require("./anchor.js");
 
 var necklaceSpec = {
     imgURL: "/resources/img/demo-chain.png",
@@ -12,6 +11,9 @@ var necklaceSpec = {
     height: 800,
     lowerAnchor: null //new THREE.Vector2(0, 100)
 };
+
+var linkWidth = 112 / 3;
+var linkHeight = 350 / 3;
 
 var componentSpecs = [
     {
@@ -54,15 +56,20 @@ var componentSpecs = [
     }
 ];
 
-function main() {
-    var item = new MTOItem();
+var canv = new WrappedCanvas('canvas');
 
-    console.log(Charm);
-    console.log(WrappedCanvas);
-    console.log(MTOItem );
-    console.log(Box2DHelper );
-    console.log(Anchor );
+function main() {
+    //var item = new MTOItem('canvas', necklaceSpec, componentSpecs);
+    //item.load().then(function() {
+        //item.invokeTests();
+    //});
+
+    canv.drawGrid(285, 285, 25);
 }
 
 module.exports = { main };
 
+document.addEventListener('mousedown', function(evt) {
+    var mousePos = canv.getTransformedCoords(evt.clientX, evt.clientY);
+    console.log(mousePos);
+});

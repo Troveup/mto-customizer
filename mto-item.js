@@ -1,32 +1,120 @@
 
-function MTOItem() {
-    this.baseChain = null;
-    this.ground = null;
-    this.selectedCharm = null;
+var WrappedCanvas = require("./wrapped-canvas.js");
+var Charm = require("./charm.js");
 
-    this.wrappedCanvas = null;
+function MTOItem(canvasID, baseSpec, charmSpecList) {
+    this.baseChain = new Charm(baseSpec);
+    this.charmList = charmSpecList.map(function(spec) {
+        return new Charm(spec);
+    });
+
+    //this.wrappedCanvas = new WrappedCanvas(canvasID);
+
+    this.selectedCharm = null;
+    this.ground = null;
 
     // potential ways to store non-linked charms
     //this.looseRoots
     //this.chainList
 }
 
-MTOItem.prototype.load = function(canvasID, baseSpec, charmSpecList) {
+MTOItem.prototype.load = function() {
+    var loadingPromises = this.charmList.map(function(charm){
+        return charm.load();
+    });
+    loadingPromises.push( this.baseChain.load() );
+
+    return Promise.all(loadingPromises);
 }
 
 MTOItem.prototype.iterateCharms = function(callback) {
+    return this.charmList.map(callback);
 }
-
 
 MTOItem.prototype.drawCharms = function() {
     this.iterateCharms(function(charm) {
-        //drawCenteredRectangle(charm.pos.x, charm.pos.y, charm.width+2, charm.height+2, 'black');
-        //drawCenteredRectangle(charm.pos.x, charm.pos.y, charm.width, charm.height, charm.style);
-        this.wrappedCanvas.drawCenteredImage(charm.pos.x, charm.pos.y, charm.width, charm.height, charm.img);
-    });
+        // debug draw
+        this.wrappedCanvas.drawCenteredRectangle(charm.pos.x, charm.pos.y, charm.width+2, charm.height+2, 'black');
+        this.wrappedCanvas.drawCenteredRectangle(charm.pos.x, charm.pos.y, charm.width, charm.height, 'orange');
+
+        // asset draw
+        //this.wrappedCanvas.drawCenteredImage(charm.pos.x, charm.pos.y, charm.width, charm.height, charm.img);
+    }.bind(this));
 }
 
-MTOItem.prototype.drawAnchors = function() {
+
+// ===========================
+
+/*FlatModel.prototype.anchorScan = function(queryComponent) {
+    var cutoffRadius = 30;
+    var result = {
+        snap: false
+    }
+
+    // assume top anchor must be open, so seek all open bottom anchors
+    this.eachComponent(function(targetComponent) {
+        if (targetComponent === queryComponent) {
+            return;
+        }
+
+        var targetSite = targetComponent.anchors.lower;
+        if (targetSite.attachedComponent) {
+            return;
+        }
+
+        var tx = targetComponent.position.x + targetSite.offset.x
+        var ty = targetComponent.position.y + targetSite.offset.y
+
+        var sourceSite = queryComponent.anchors.upper;
+        var qx = queryComponent.position.x + sourceSite.offset.x
+        var qy = queryComponent.position.y + sourceSite.offset.y
+
+        var dx = tx - qx;
+        var dy = ty - qy;
+
+        var dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < cutoffRadius) {
+            result.snap = true;
+            result.upperAnchor = sourceSite;
+            result.lowerAnchor = targetSite;
+            result.freshAttachment = targetComponent;
+            result.params = {
+                x: dx,
+                y: dy
+            }
+        }
+    });
+    return result;
+}
+
+FlatModel.prototype.checkAnchors = function() {
+    var len = this.componentList.length;
+    var overlap = null;
+    for (var i = 0; i < len; i++) {
+        for (var j = i; j < len; j++) {
+            if (i == j) continue;
+
+            var objA = this.componentList[i];
+            var objB = this.componentList[j];
+            
+            var results = objA.compareAnchors(objB);
+            if (results.hit) {
+                if (!overlap || results.dist < overlap.dist) {
+                    overlap = {
+                        dist: results.dist,
+                        first: objA,
+                        second: objB,
+                        firstIndex: results.indexA,
+                        secondIndex: results.indexB
+                    };
+                }
+            }
+        }
+    }
+    return overlap;
+}*/
+
+/*MTOItem.prototype.drawAnchors = function() {
     var anchorRenderRadius = 3;
     var posX = this.position.x;
     var posY = this.position.y;
@@ -47,7 +135,7 @@ MTOItem.prototype.drawAnchors = function() {
 
         ctx.restore();
     });
-}
+}*/
 
 MTOItem.prototype.iterateAnchors = function(callback) {
 }
