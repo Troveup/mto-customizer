@@ -11,7 +11,6 @@ var anchorColors = {
     overlap: 'yellow'
 };
 
-
 function WrappedCanvas(canvasID = 'canvas') {
     var cnv = document.getElementById(canvasID);
     if (!cnv) {
@@ -22,8 +21,16 @@ function WrappedCanvas(canvasID = 'canvas') {
     this.canvas = cnv;
     this.context = cnv.getContext('2d');
     
-    this.centerOrigin();
     this.boundingRectangle = this.canvas.getBoundingClientRect();
+}
+
+WrappedCanvas.prototype.clean = function() {
+    var x = -this.origin.x;
+    var y = -this.origin.y;
+    var width = this.canvas.width;
+    var height = this.canvas.height;
+
+    this.context.clearRect( x, y, width, height );
 }
 
 WrappedCanvas.prototype.centerOrigin = function() {

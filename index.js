@@ -56,15 +56,25 @@ var componentSpecs = [
     }
 ];
 
-var canv = new WrappedCanvas('canvas');
+var item;
+
+var dt, currTime, lastTime = Date.now();
+
+function loop() {
+    currTime = Date.now();
+    dt = currTime - lastTime;
+    lastTime = currTime;
+
+    requestAnimationFrame(loop);
+    item.render();
+    item.fallTest(dt);
+}
 
 function main() {
-    //var item = new MTOItem('canvas', necklaceSpec, componentSpecs);
-    //item.load().then(function() {
-        //item.invokeTests();
-    //});
-
-    canv.drawGrid(285, 285, 25);
+    item = new MTOItem('canvas', necklaceSpec, componentSpecs);
+    item.load().then(function() {
+        loop();
+    });
 }
 
 module.exports = { main };

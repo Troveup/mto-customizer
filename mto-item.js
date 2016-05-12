@@ -8,7 +8,8 @@ function MTOItem(canvasID, baseSpec, charmSpecList) {
         return new Charm(spec);
     });
 
-    //this.wrappedCanvas = new WrappedCanvas(canvasID);
+    this.wrappedCanvas = new WrappedCanvas(canvasID);
+    this.wrappedCanvas.centerOrigin();
 
     this.selectedCharm = null;
     this.ground = null;
@@ -16,6 +17,14 @@ function MTOItem(canvasID, baseSpec, charmSpecList) {
     // potential ways to store non-linked charms
     //this.looseRoots
     //this.chainList
+}
+
+var fallSpeed = 0.3;
+MTOItem.prototype.fallTest = function(dt) {
+    var deltaY = dt * fallSpeed;
+    this.iterateCharms(function(charm) {
+        charm.pos.y -= deltaY;
+    });
 }
 
 MTOItem.prototype.load = function() {
@@ -29,6 +38,11 @@ MTOItem.prototype.load = function() {
 
 MTOItem.prototype.iterateCharms = function(callback) {
     return this.charmList.map(callback);
+}
+
+MTOItem.prototype.render = function() {
+    this.wrappedCanvas.clean();
+    this.drawCharms();
 }
 
 MTOItem.prototype.drawCharms = function() {
