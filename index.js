@@ -66,8 +66,9 @@ function loop() {
     lastTime = currTime;
 
     requestAnimationFrame(loop);
+    item.syncPhysics();
     item.render();
-    item.fallTest(dt);
+    // item.fallTest(dt);
 }
 
 function main() {

@@ -52,3 +52,5 @@ Box2DHelper.prototype.tick = function(dt) {
     //this.world.ClearForces();
 }
 
+module.exports = Box2DHelper;
+

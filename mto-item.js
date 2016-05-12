@@ -1,6 +1,7 @@
 
 var WrappedCanvas = require("./wrapped-canvas.js");
 var Charm = require("./charm.js");
+var Box2DHelper = require("./box2d-helper.js");
 
 function MTOItem(canvasID, baseSpec, charmSpecList) {
     this.baseChain = new Charm(baseSpec);
@@ -47,6 +48,9 @@ MTOItem.prototype.render = function() {
 
 MTOItem.prototype.syncPhysics = function() {
     this.iterateCharms(function(charm) {
+        debugger;
+        var physData = Box2DHelper.summarize(charm);
+        console.log(physData);
     }.bind(this));
 }
 
