@@ -18,7 +18,6 @@ Box2DHelper.prototype.init = function() {
 };
 
 Box2DHelper.prototype.createBox = function(x, y, desiredAngle, width, height, type) {
-    // this.bodyDef.set_position( new Box2D.b2Vec2( x, y ) );
     if (type == 'static') {
         this.bodyDef.set_type(Box2D.b2_staticBody);
     } else {

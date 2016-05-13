@@ -4,7 +4,7 @@ var Charm = require("./charm.js");
 var Box2DHelper = require("./box2d-helper.js");
 
 function MTOItem(canvasID, baseSpec, charmSpecList) {
-    // this.baseChain = new Charm(baseSpec);
+    this.baseChain = new Charm(baseSpec);
     this.charmList = charmSpecList.map(function(spec) {
         return new Charm(spec);
     });
@@ -40,16 +40,24 @@ var groundY = -200;
 var groundWidth = 600;
 var groundHeight = 10;
 
-MTOItem.prototype.load = function() {
+MTOItem.prototype.loadAssets = function() {
     var loadingPromises = this.charmList.map(function(charm){
-        charm.body = this.physics.createBox(charm.pos.x, charm.pos.y, charm.angleInRadians, charm.width, charm.height, 'dynamic');
-        return charm.load();
+        return charm.loadAssets();
     }.bind(this));
-
-    this.groundBody = this.physics.createBox(groundX, groundY, 0, groundWidth, groundHeight, 'static');
-    //loadingPromises.push( this.baseChain.load() );
+    loadingPromises.push( this.baseChain.loadAssets() );
 
     return Promise.all(loadingPromises);
+};
+
+MTOItem.prototype.initPhysics = function() {
+    this.groundBody = this.physics.createBox(groundX, groundY, 0, groundWidth, groundHeight, 'static');
+    this.charmList.map(function(c){
+        c.body = this.physics.createBox(c.pos.x, c.pos.y, c.angleInRadians, c.width, c.height, 'dynamic');
+    }.bind(this));
+}
+
+MTOItem.prototype.testDangle = function() {
+    this.physics
 };
 
 MTOItem.prototype.iterateCharms = function(callback) {

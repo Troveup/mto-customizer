@@ -80,7 +80,9 @@ function main() {
     //animLoop();
 
     item = new MTOItem('canvas', necklaceSpec, componentSpecs);
-    item.load().then(function() {
+    //item.testDangle();
+    item.loadAssets().then(function() {
+        item.initPhysics();
         loop();
     });
 }

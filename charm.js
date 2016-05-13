@@ -46,7 +46,7 @@ function Charm(spec) {
 //}
 
 
-Charm.prototype.load = function() {
+Charm.prototype.loadAssets = function() {
     var that = this;
 
     return new Promise(function(resolve, reject){
