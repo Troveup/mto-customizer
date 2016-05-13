@@ -83,7 +83,7 @@ WrappedCanvas.prototype.drawImage = function(x, y, angleInRadians, width, height
 
     var hx = width / 2;
     var hy = height / 2;
-    this.context.drawImage(img, x - hx, y - hy, width, height);
+    this.context.drawImage(img, -hx, -hy, width, height);
     this.context.restore();
 }
 

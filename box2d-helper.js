@@ -4,7 +4,7 @@ var Box2D = require('box2d');
 function Box2DHelper() {
     this.world = null;
     this.bodies = [];
-}
+};
 
 Box2DHelper.prototype.init = function() {
     var earthGravity = new Box2D.b2Vec2( 0.0, -9.8 );
@@ -15,7 +15,7 @@ Box2DHelper.prototype.init = function() {
     this.fixtureDef = new Box2D.b2FixtureDef();
     this.fixtureDef.set_density( 1.0 );
     this.fixtureDef.set_friction( 0.5 );
-}
+};
 
 Box2DHelper.prototype.createBox = function(x, y, desiredAngle, width, height, type) {
     // this.bodyDef.set_position( new Box2D.b2Vec2( x, y ) );
@@ -37,7 +37,7 @@ Box2DHelper.prototype.createBox = function(x, y, desiredAngle, width, height, ty
     this.bodies.push( newBody );
 
     return newBody;
-}
+};
 
 Box2DHelper.prototype.summarize = function(body) {
     var bpos = body.GetPosition();
@@ -46,7 +46,7 @@ Box2DHelper.prototype.summarize = function(body) {
         y: bpos.get_y(),
         angle: body.GetAngle()
     };
-}
+};
 
 // FIXME: figure out way around extremely long deleta
 // watch for the tab losing focus, if it does reset the `lastTime` upon returning to the tab
@@ -58,7 +58,7 @@ Box2DHelper.prototype.tick = function(dt) {
 
     // is this necessary?
     //this.world.ClearForces();
-}
+};
 
 module.exports = Box2DHelper;
 

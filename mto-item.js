@@ -79,12 +79,9 @@ MTOItem.prototype.syncPhysics = function() {
 
 MTOItem.prototype.drawCharms = function() {
     this.iterateCharms(function(charm) {
-        var angle = charm.angleInRadians;
-        this.wrappedCanvas.drawRectangle(charm.pos.x, charm.pos.y, angle, charm.width+2, charm.height+2, 'black');
-        this.wrappedCanvas.drawRectangle(charm.pos.x, charm.pos.y, angle, charm.width, charm.height, 'orange');
-
-        // asset draw
-        //this.wrappedCanvas.drawImage(charm.pos.x, charm.pos.y, charm.rotation, charm.width, charm.height, charm.img);
+        this.wrappedCanvas.drawRectangle(charm.pos.x, charm.pos.y, charm.angleInRadians, charm.width+2, charm.height+2, 'black');
+        this.wrappedCanvas.drawRectangle(charm.pos.x, charm.pos.y, charm.angleInRadians, charm.width, charm.height, 'white');
+        this.wrappedCanvas.drawImage(charm.pos.x, charm.pos.y, charm.angleInRadians, charm.width, charm.height, charm.img);
     }.bind(this));
 };
 
