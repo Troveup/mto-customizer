@@ -23,22 +23,35 @@ function MTOItem(canvasID, baseSpec, charmSpecList) {
     //this.chainList
 }
 
+MTOItem.prototype.spawnCharm = function(x, y, anchorOffset) {
+    var linkWidth = 112 / 3;
+    var linkHeight = 350 / 3;
+    var proceduralSpec = {
+        imgURL: "/resources/img/charm-link.png",
+        position: new THREE.Vector2(x, y),
+        rotation: 0,
+        width: linkWidth,
+        height: linkHeight,
+        upperAnchor: new THREE.Vector2(0, anchorOffset),
+        lowerAnchor: new THREE.Vector2(0, -anchorOffset)
+    };
+
+    var c = new Charm(proceduralSpec);
+    c.body = this.physics.createBox(c.pos.x, c.pos.y, c.angleInRadians, c.width, c.height, 'dynamic');
+    return c;
+}
+
+
 MTOItem.prototype.timeStep = function(dt) {
     this.physics.tick(dt);
 }
 
-/*var fallSpeed = 0.3;
-MTOItem.prototype.fallTest = function(dt) {
-    var deltaY = dt * fallSpeed;
-    this.iterateCharms(function(charm) {
-        charm.pos.y -= deltaY;
-    });
-}*/
-
 var groundX = 0;
 var groundY = -200;
-var groundWidth = 600;
-var groundHeight = 10;
+var roofX = 0;
+var roofY = 200;
+var oblongWidth = 600;
+var oblongHeight = 10;
 
 MTOItem.prototype.loadAssets = function() {
     var loadingPromises = this.charmList.map(function(charm){
@@ -49,15 +62,38 @@ MTOItem.prototype.loadAssets = function() {
     return Promise.all(loadingPromises);
 };
 
-MTOItem.prototype.initPhysics = function() {
-    this.groundBody = this.physics.createBox(groundX, groundY, 0, groundWidth, groundHeight, 'static');
+MTOItem.prototype.addCharmsToSim = function() {
+    // this is a debug line, should eventually remove
+    this.groundBody = this.physics.createBox(groundX, groundY, 0, oblongWidth, oblongHeight, 'static');
+
     this.charmList.map(function(c){
         c.body = this.physics.createBox(c.pos.x, c.pos.y, c.angleInRadians, c.width, c.height, 'dynamic');
     }.bind(this));
-}
+};
 
 MTOItem.prototype.testDangle = function() {
-    this.physics
+    this.roofBody = this.physics.createBox(roofX, roofY, 0, oblongWidth, oblongHeight, 'static');
+    this.groundBody = this.physics.createBox(groundX, groundY, 0, oblongWidth, oblongHeight, 'static');
+
+    this.testLinks = [];
+
+    var anchorOffset = 46;
+    var lastPos = {
+        x: roofX,
+        y: roofY - anchorOffset
+    };
+    var lastBody = this.roofBody;
+
+    var newCharm;
+    var numLinks = 3;
+    for (var i = 0; i < numLinks; i++) {
+        newCharm = this.spawnCharm(lastPos.x, lastPos.y, anchorOffset);
+
+        newCharm.upperAnchor
+
+        this.testLinks.push( newCharm );
+        lastPos.y -= 2 * anchorOffset;
+    }
 };
 
 MTOItem.prototype.iterateCharms = function(callback) {
@@ -73,7 +109,7 @@ MTOItem.prototype.render = function() {
 
 MTOItem.prototype.drawGround = function() {
     var g = this.physics.summarize(this.groundBody);
-    this.wrappedCanvas.drawRectangle(g.x, g.y, g.angle, groundWidth, groundHeight, 'black');
+    this.wrappedCanvas.drawRectangle(g.x, g.y, g.angle, oblongWidth, oblongHeight, 'black');
 };
 
 MTOItem.prototype.syncPhysics = function() {
@@ -86,6 +122,15 @@ MTOItem.prototype.syncPhysics = function() {
 };
 
 MTOItem.prototype.drawCharms = function() {
+    if (this.testLinks) {
+        this.testLinks.map(function(charm) {
+            console.log("Debug pos: ", charm.pos);
+            this.wrappedCanvas.drawRectangle(charm.pos.x, charm.pos.y, charm.angleInRadians, charm.width+2, charm.height+2, 'black');
+            this.wrappedCanvas.drawRectangle(charm.pos.x, charm.pos.y, charm.angleInRadians, charm.width, charm.height, 'white');
+        }.bind(this));
+        return;
+    }
+
     this.iterateCharms(function(charm) {
         this.wrappedCanvas.drawRectangle(charm.pos.x, charm.pos.y, charm.angleInRadians, charm.width+2, charm.height+2, 'black');
         this.wrappedCanvas.drawRectangle(charm.pos.x, charm.pos.y, charm.angleInRadians, charm.width, charm.height, 'white');

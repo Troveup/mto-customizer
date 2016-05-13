@@ -80,11 +80,13 @@ function main() {
     //animLoop();
 
     item = new MTOItem('canvas', necklaceSpec, componentSpecs);
-    //item.testDangle();
-    item.loadAssets().then(function() {
-        item.initPhysics();
-        loop();
-    });
+    item.testDangle();
+    item.drawCharms();
+
+    //item.loadAssets().then(function() {
+        //item.addCharmsToSim();
+        //loop();
+    //});
 }
 
 document.addEventListener('mousedown', function(evt) {
