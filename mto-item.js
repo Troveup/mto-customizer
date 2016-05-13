@@ -13,7 +13,7 @@ function MTOItem(canvasID, baseSpec, charmSpecList) {
     this.wrappedCanvas.centerOrigin();
 
     this.selectedCharm = null;
-    this.ground = null;
+    this.groundBody = null;
 
     this.physics = new Box2DHelper();
     this.physics.init();
@@ -35,11 +35,18 @@ MTOItem.prototype.fallTest = function(dt) {
     });
 }*/
 
+var groundX = 0;
+var groundY = -200;
+var groundWidth = 600;
+var groundHeight = 10;
+
 MTOItem.prototype.load = function() {
     var loadingPromises = this.charmList.map(function(charm){
-        charm.body = this.physics.createBox(charm.pos.x, charm.pos.y, charm.rotation, charm.width, charm.height, 'dynamic');
+        charm.body = this.physics.createBox(charm.pos.x, charm.pos.y, charm.angleInRadians, charm.width, charm.height, 'dynamic');
         return charm.load();
     }.bind(this));
+
+    this.groundBody = this.physics.createBox(groundX, groundY, 0, groundWidth, groundHeight, 'static');
     //loadingPromises.push( this.baseChain.load() );
 
     return Promise.all(loadingPromises);
@@ -52,32 +59,32 @@ MTOItem.prototype.iterateCharms = function(callback) {
 MTOItem.prototype.render = function() {
     this.wrappedCanvas.clean();
     this.drawCharms();
+    this.drawGround();
+
 };
 
-//var brokenDrop = false;
+MTOItem.prototype.drawGround = function() {
+    var g = this.physics.summarize(this.groundBody);
+    this.wrappedCanvas.drawRectangle(g.x, g.y, g.angle, groundWidth, groundHeight, 'black');
+};
+
 MTOItem.prototype.syncPhysics = function() {
     this.iterateCharms(function(charm) {
-
         var physData = this.physics.summarize(charm.body);
-        //if (brokenDrop) debugger;
-        //if (charm.pos.y == physData.y) {
-            //brokenDrop = true;
-            //console.log("unchanged y!");
-        //}
-
         charm.pos.x = physData.x;
         charm.pos.y = physData.y;
-        charm.rotation = physData.angle;
+        charm.angleInRadians = physData.angle;
     }.bind(this));
 };
 
 MTOItem.prototype.drawCharms = function() {
     this.iterateCharms(function(charm) {
-        this.wrappedCanvas.drawRectangle(charm.pos.x, charm.pos.y, charm.rotation, charm.width+2, charm.height+2, 'black');
-        this.wrappedCanvas.drawRectangle(charm.pos.x, charm.pos.y, charm.rotation, charm.width, charm.height, 'orange');
+        var angle = charm.angleInRadians;
+        this.wrappedCanvas.drawRectangle(charm.pos.x, charm.pos.y, angle, charm.width+2, charm.height+2, 'black');
+        this.wrappedCanvas.drawRectangle(charm.pos.x, charm.pos.y, angle, charm.width, charm.height, 'orange');
 
         // asset draw
-        //this.wrappedCanvas.drawImage(charm.pos.x, charm.pos.y, 0, charm.width, charm.height, charm.img);
+        //this.wrappedCanvas.drawImage(charm.pos.x, charm.pos.y, charm.rotation, charm.width, charm.height, charm.img);
     }.bind(this));
 };
 

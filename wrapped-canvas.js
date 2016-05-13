@@ -76,10 +76,10 @@ WrappedCanvas.prototype.drawCircle = function(x, y, radius, style) {
     this.context.fill();
 }
 
-WrappedCanvas.prototype.drawImage = function(x, y, rotation, width, height, img) {
+WrappedCanvas.prototype.drawImage = function(x, y, angleInRadians, width, height, img) {
     this.context.save();
     this.context.translate(x, y);
-    this.context.rotate(rotation * DEG_TO_RAD);
+    this.context.rotate(angleInRadians);
 
     var hx = width / 2;
     var hy = height / 2;
@@ -87,12 +87,11 @@ WrappedCanvas.prototype.drawImage = function(x, y, rotation, width, height, img)
     this.context.restore();
 }
 
-var DEG_TO_RAD = Math.PI / 180;
-WrappedCanvas.prototype.drawRectangle = function(x, y, rotation, width, height, style) {
+WrappedCanvas.prototype.drawRectangle = function(x, y, angleInRadians, width, height, style) {
     this.context.save();
     this.context.fillStyle = style;
     this.context.translate(x, y);
-    this.context.rotate(rotation * DEG_TO_RAD);
+    this.context.rotate(angleInRadians);
 
     var hx = width / 2;
     var hy = height / 2;

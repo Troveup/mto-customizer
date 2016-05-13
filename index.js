@@ -13,6 +13,7 @@ var necklaceSpec = {
 var linkWidth = 112 / 3;
 var linkHeight = 350 / 3;
 
+var DEG_TO_RAD = Math.PI / 180;
 var componentSpecs = [
     //{
         //imgURL: "/resources/img/charm-link.png",
@@ -39,7 +40,7 @@ var componentSpecs = [
     {
         imgURL: "/resources/img/charm-link.png",
         position: new THREE.Vector2(0, 0),
-        rotation: 45,
+        rotation: 45 * DEG_TO_RAD,
         width: linkWidth,
         height: linkHeight,
         upperAnchor: new THREE.Vector2(0, 46),
@@ -54,6 +55,7 @@ var componentSpecs = [
         //lowerAnchor: new THREE.Vector2(0, -46)
     //}
 ];
+
 
 var item;
 var dt, currTime, lastTime = Date.now();
@@ -71,25 +73,10 @@ function loop() {
 }
 
 var testCanvas;
-//var s = { x: 0, y: 0, rot: 0 };
-//function animLoop() {
-    //requestAnimationFrame(animLoop);
-
-    //testCanvas.clean();
-    //testCanvas.drawRectangle(s.x, s.y, s.rot, 50, 50, 'orange');
-
-    //console.log(s);
-
-    //s.rot += 0.4;
-    //s.x += 0.1;
-    //s.y += 0.2;
-//}
-
 function main() {
     //testCanvas = new WrappedCanvas();
     //testCanvas.centerOrigin();
     //testCanvas.drawRectangle(s.x, s.y, s.rot, 50, 50, 'orange');
-
     //animLoop();
 
     item = new MTOItem('canvas', necklaceSpec, componentSpecs);
