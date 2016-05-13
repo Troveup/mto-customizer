@@ -39,6 +39,7 @@ var componentSpecs = [
     {
         imgURL: "/resources/img/charm-link.png",
         position: new THREE.Vector2(0, 0),
+        rotation: 45,
         width: linkWidth,
         height: linkHeight,
         upperAnchor: new THREE.Vector2(0, 46),
@@ -70,35 +71,36 @@ function loop() {
 }
 
 var testCanvas;
-var s = { x: 0, y: 0, rot: 0 };
-function animLoop() {
-    requestAnimationFrame(animLoop);
+//var s = { x: 0, y: 0, rot: 0 };
+//function animLoop() {
+    //requestAnimationFrame(animLoop);
 
-    testCanvas.clean();
-    testCanvas.drawRectangle(s.x, s.y, s.rot, 50, 50, 'orange');
+    //testCanvas.clean();
+    //testCanvas.drawRectangle(s.x, s.y, s.rot, 50, 50, 'orange');
 
-    console.log(s);
+    //console.log(s);
 
-    s.rot += 0.4;
-    s.x += 0.1;
-    s.y += 0.2;
-}
+    //s.rot += 0.4;
+    //s.x += 0.1;
+    //s.y += 0.2;
+//}
 
 function main() {
-    testCanvas = new WrappedCanvas();
-    testCanvas.centerOrigin();
-    testCanvas.drawRectangle(s.x, s.y, s.rot, 50, 50, 'orange');
+    //testCanvas = new WrappedCanvas();
+    //testCanvas.centerOrigin();
+    //testCanvas.drawRectangle(s.x, s.y, s.rot, 50, 50, 'orange');
 
-     animLoop();
+    //animLoop();
 
-    //item = new MTOItem('canvas', necklaceSpec, componentSpecs);
-    //item.load().then(function() {
-        //loop();
-    //});
+    item = new MTOItem('canvas', necklaceSpec, componentSpecs);
+    item.load().then(function() {
+        loop();
+    });
 }
-
-module.exports = { main };
 
 document.addEventListener('mousedown', function(evt) {
     var mousePos = item.wrappedCanvas.getTransformedCoords(evt.clientX, evt.clientY);
 });
+
+module.exports = { main };
+

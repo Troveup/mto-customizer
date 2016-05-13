@@ -4,7 +4,7 @@ var Charm = require("./charm.js");
 var Box2DHelper = require("./box2d-helper.js");
 
 function MTOItem(canvasID, baseSpec, charmSpecList) {
-    this.baseChain = new Charm(baseSpec);
+    // this.baseChain = new Charm(baseSpec);
     this.charmList = charmSpecList.map(function(spec) {
         return new Charm(spec);
     });
@@ -37,10 +37,10 @@ MTOItem.prototype.fallTest = function(dt) {
 
 MTOItem.prototype.load = function() {
     var loadingPromises = this.charmList.map(function(charm){
-        charm.body = this.physics.createBox(charm.pos.x, charm.pos.y, charm.width, charm.height, 'dynamic');
+        charm.body = this.physics.createBox(charm.pos.x, charm.pos.y, charm.rotation, charm.width, charm.height, 'dynamic');
         return charm.load();
     }.bind(this));
-    loadingPromises.push( this.baseChain.load() );
+    //loadingPromises.push( this.baseChain.load() );
 
     return Promise.all(loadingPromises);
 };
@@ -58,8 +58,8 @@ MTOItem.prototype.render = function() {
 MTOItem.prototype.syncPhysics = function() {
     this.iterateCharms(function(charm) {
 
-        //if (brokenDrop) debugger;
         var physData = this.physics.summarize(charm.body);
+        //if (brokenDrop) debugger;
         //if (charm.pos.y == physData.y) {
             //brokenDrop = true;
             //console.log("unchanged y!");
@@ -67,15 +67,14 @@ MTOItem.prototype.syncPhysics = function() {
 
         charm.pos.x = physData.x;
         charm.pos.y = physData.y;
-        charm.rotation = physData.rot;
+        charm.rotation = physData.angle;
     }.bind(this));
 };
 
 MTOItem.prototype.drawCharms = function() {
     this.iterateCharms(function(charm) {
-        // debug draw
-        this.wrappedCanvas.drawRectangle(charm.pos.x, charm.pos.y, 0, charm.width+2, charm.height+2, 'black');
-        this.wrappedCanvas.drawRectangle(charm.pos.x, charm.pos.y, 0, charm.width, charm.height, 'orange');
+        this.wrappedCanvas.drawRectangle(charm.pos.x, charm.pos.y, charm.rotation, charm.width+2, charm.height+2, 'black');
+        this.wrappedCanvas.drawRectangle(charm.pos.x, charm.pos.y, charm.rotation, charm.width, charm.height, 'orange');
 
         // asset draw
         //this.wrappedCanvas.drawImage(charm.pos.x, charm.pos.y, 0, charm.width, charm.height, charm.img);

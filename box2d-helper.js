@@ -17,12 +17,11 @@ Box2DHelper.prototype.init = function() {
     this.fixtureDef.set_friction( 0.5 );
 }
 
-Box2DHelper.prototype.createBox = function(x, y, width, height, type) {
-    this.bodyDef.set_position( new Box2D.b2Vec2( x, y ) );
+Box2DHelper.prototype.createBox = function(x, y, desiredAngle, width, height, type) {
+    // this.bodyDef.set_position( new Box2D.b2Vec2( x, y ) );
     if (type == 'static') {
         this.bodyDef.set_type(Box2D.b2_staticBody);
     } else {
-        console.log("dynamic");
         this.bodyDef.set_type(Box2D.b2_dynamicBody);
     }
     
@@ -32,6 +31,9 @@ Box2DHelper.prototype.createBox = function(x, y, width, height, type) {
 
     var newBody = this.world.CreateBody(this.bodyDef);
     newBody.CreateFixture( this.fixtureDef );
+
+    newBody.SetTransform( new Box2D.b2Vec2( x, y ), desiredAngle );
+
     this.bodies.push( newBody );
 
     return newBody;
