@@ -22,6 +22,7 @@ Box2DHelper.prototype.createBox = function(x, y, width, height, type) {
     if (type == 'static') {
         this.bodyDef.set_type(Box2D.b2_staticBody);
     } else {
+        console.log("dynamic");
         this.bodyDef.set_type(Box2D.b2_dynamicBody);
     }
     
@@ -29,7 +30,7 @@ Box2DHelper.prototype.createBox = function(x, y, width, height, type) {
     shape.SetAsBox(width / 2, height / 2);
     this.fixtureDef.set_shape( shape );
 
-    var newBody = world.CreateBody(this.bodyDef);
+    var newBody = this.world.CreateBody(this.bodyDef);
     newBody.CreateFixture( this.fixtureDef );
     this.bodies.push( newBody );
 
@@ -45,8 +46,13 @@ Box2DHelper.prototype.summarize = function(body) {
     };
 }
 
+// FIXME: figure out way around extremely long deleta
+// watch for the tab losing focus, if it does reset the `lastTime` upon returning to the tab
+console.warn("Don't hardcode physics time step delta");
 Box2DHelper.prototype.tick = function(dt) {
-    this.world.Step(dt, 2, 2);
+    var realDeltaInSeconds = dt / 1000;
+    var desiredDelta = 1/60;
+    this.world.Step(desiredDelta, 2, 2);
 
     // is this necessary?
     //this.world.ClearForces();

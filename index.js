@@ -1,8 +1,6 @@
 
 var WrappedCanvas = require("./wrapped-canvas.js");
 var MTOItem = require("./mto-item.js");
-// var Box2DHelper = require("./box2d-helper.js");
-// var Anchor = require("./anchor.js");
 
 var necklaceSpec = {
     imgURL: "/resources/img/demo-chain.png",
@@ -16,28 +14,28 @@ var linkWidth = 112 / 3;
 var linkHeight = 350 / 3;
 
 var componentSpecs = [
-    {
-        imgURL: "/resources/img/charm-link.png",
-        position: new THREE.Vector2(-50, 120),
-        width: 5,
-        height: 5,
-        lowerAnchor: new THREE.Vector2(0, 0)
-    },
-    {
-        imgURL: "/resources/img/charm-link.png",
-        position: new THREE.Vector2(60, 120),
-        width: 5,
-        height: 5,
-        lowerAnchor: new THREE.Vector2(0, 0)
-    },
-    {
-        imgURL: "/resources/img/charm-link.png",
-        position: new THREE.Vector2(-50, 0),
-        width: linkWidth,
-        height: linkHeight,
-        upperAnchor: new THREE.Vector2(0, 46),
-        lowerAnchor: new THREE.Vector2(0, -46)
-    },
+    //{
+        //imgURL: "/resources/img/charm-link.png",
+        //position: new THREE.Vector2(-50, 120),
+        //width: 5,
+        //height: 5,
+        //lowerAnchor: new THREE.Vector2(0, 0)
+    //},
+    //{
+        //imgURL: "/resources/img/charm-link.png",
+        //position: new THREE.Vector2(60, 120),
+        //width: 5,
+        //height: 5,
+        //lowerAnchor: new THREE.Vector2(0, 0)
+    //},
+    //{
+        //imgURL: "/resources/img/charm-link.png",
+        //position: new THREE.Vector2(-50, 0),
+        //width: linkWidth,
+        //height: linkHeight,
+        //upperAnchor: new THREE.Vector2(0, 46),
+        //lowerAnchor: new THREE.Vector2(0, -46)
+    //},
     {
         imgURL: "/resources/img/charm-link.png",
         position: new THREE.Vector2(0, 0),
@@ -46,41 +44,61 @@ var componentSpecs = [
         upperAnchor: new THREE.Vector2(0, 46),
         lowerAnchor: new THREE.Vector2(0, -46)
     },
-    {
-        imgURL: "/resources/img/charm-link.png",
-        position: new THREE.Vector2(50, 0),
-        width: linkWidth,
-        height: linkHeight,
-        upperAnchor: new THREE.Vector2(0, 46),
-        lowerAnchor: new THREE.Vector2(0, -46)
-    }
+    //{
+        //imgURL: "/resources/img/charm-link.png",
+        //position: new THREE.Vector2(50, 0),
+        //width: linkWidth,
+        //height: linkHeight,
+        //upperAnchor: new THREE.Vector2(0, 46),
+        //lowerAnchor: new THREE.Vector2(0, -46)
+    //}
 ];
 
 var item;
-
 var dt, currTime, lastTime = Date.now();
 
 function loop() {
+    requestAnimationFrame(loop);
+
     currTime = Date.now();
     dt = currTime - lastTime;
     lastTime = currTime;
 
-    requestAnimationFrame(loop);
+    item.timeStep(dt);
     item.syncPhysics();
     item.render();
-    // item.fallTest(dt);
+}
+
+var testCanvas;
+var s = { x: 0, y: 0, rot: 0 };
+function animLoop() {
+    requestAnimationFrame(animLoop);
+
+    testCanvas.clean();
+    testCanvas.drawRectangle(s.x, s.y, s.rot, 50, 50, 'orange');
+
+    console.log(s);
+
+    s.rot += 0.4;
+    s.x += 0.1;
+    s.y += 0.2;
 }
 
 function main() {
-    item = new MTOItem('canvas', necklaceSpec, componentSpecs);
-    item.load().then(function() {
-        loop();
-    });
+    testCanvas = new WrappedCanvas();
+    testCanvas.centerOrigin();
+    testCanvas.drawRectangle(s.x, s.y, s.rot, 50, 50, 'orange');
+
+     animLoop();
+
+    //item = new MTOItem('canvas', necklaceSpec, componentSpecs);
+    //item.load().then(function() {
+        //loop();
+    //});
 }
 
 module.exports = { main };
 
 document.addEventListener('mousedown', function(evt) {
-    var mousePos = canv.getTransformedCoords(evt.clientX, evt.clientY);
-    console.log(mousePos);
+    var mousePos = item.wrappedCanvas.getTransformedCoords(evt.clientX, evt.clientY);
 });

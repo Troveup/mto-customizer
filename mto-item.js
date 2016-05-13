@@ -15,55 +15,72 @@ function MTOItem(canvasID, baseSpec, charmSpecList) {
     this.selectedCharm = null;
     this.ground = null;
 
+    this.physics = new Box2DHelper();
+    this.physics.init();
+
     // potential ways to store non-linked charms
     //this.looseRoots
     //this.chainList
 }
 
-var fallSpeed = 0.3;
+MTOItem.prototype.timeStep = function(dt) {
+    this.physics.tick(dt);
+}
+
+/*var fallSpeed = 0.3;
 MTOItem.prototype.fallTest = function(dt) {
     var deltaY = dt * fallSpeed;
     this.iterateCharms(function(charm) {
         charm.pos.y -= deltaY;
     });
-}
+}*/
 
 MTOItem.prototype.load = function() {
     var loadingPromises = this.charmList.map(function(charm){
+        charm.body = this.physics.createBox(charm.pos.x, charm.pos.y, charm.width, charm.height, 'dynamic');
         return charm.load();
-    });
+    }.bind(this));
     loadingPromises.push( this.baseChain.load() );
 
     return Promise.all(loadingPromises);
-}
+};
 
 MTOItem.prototype.iterateCharms = function(callback) {
     return this.charmList.map(callback);
-}
+};
 
 MTOItem.prototype.render = function() {
     this.wrappedCanvas.clean();
     this.drawCharms();
-}
+};
 
+//var brokenDrop = false;
 MTOItem.prototype.syncPhysics = function() {
     this.iterateCharms(function(charm) {
-        debugger;
-        var physData = Box2DHelper.summarize(charm);
-        console.log(physData);
+
+        //if (brokenDrop) debugger;
+        var physData = this.physics.summarize(charm.body);
+        //if (charm.pos.y == physData.y) {
+            //brokenDrop = true;
+            //console.log("unchanged y!");
+        //}
+
+        charm.pos.x = physData.x;
+        charm.pos.y = physData.y;
+        charm.rotation = physData.rot;
     }.bind(this));
-}
+};
 
 MTOItem.prototype.drawCharms = function() {
     this.iterateCharms(function(charm) {
         // debug draw
-        this.wrappedCanvas.drawCenteredRectangle(charm.pos.x, charm.pos.y, charm.width+2, charm.height+2, 'black');
-        this.wrappedCanvas.drawCenteredRectangle(charm.pos.x, charm.pos.y, charm.width, charm.height, 'orange');
+        this.wrappedCanvas.drawRectangle(charm.pos.x, charm.pos.y, 0, charm.width+2, charm.height+2, 'black');
+        this.wrappedCanvas.drawRectangle(charm.pos.x, charm.pos.y, 0, charm.width, charm.height, 'orange');
 
         // asset draw
-        //this.wrappedCanvas.drawCenteredImage(charm.pos.x, charm.pos.y, charm.width, charm.height, charm.img);
+        //this.wrappedCanvas.drawImage(charm.pos.x, charm.pos.y, 0, charm.width, charm.height, charm.img);
     }.bind(this));
-}
+};
 
 
 // ===========================
@@ -161,12 +178,12 @@ FlatModel.prototype.checkAnchors = function() {
 }*/
 
 MTOItem.prototype.iterateAnchors = function(callback) {
-}
+};
 
 MTOItem.prototype.handleMousedown = function(callback) {
-}
+};
 
 MTOItem.prototype.handleMousemouve = function(callback) {
-}
+};
 
 module.exports = MTOItem;

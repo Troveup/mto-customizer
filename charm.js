@@ -5,6 +5,7 @@ function Charm(spec) {
     this.width = spec.width;
     this.height = spec.height;
     this.anchors = {};
+    this.rotation = spec.rotation || 0;
 
     if (spec.upperAnchor) {
         this.anchors.upper = {
