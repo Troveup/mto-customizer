@@ -85,12 +85,14 @@ MTOItem.prototype.testDangle = function() {
 
     var that = this;
     function createAndAttachLink(lastBody, lastAnchorOffset) {
+
         // new link center = lastBody pos + lastAnchorOffset + anchorOffsetDist
         var lastPos = lastBody.GetPosition();
         var newCenter = {
             x: lastPos.get_x() + lastAnchorOffset.get_x(),
             y: lastPos.get_y() + lastAnchorOffset.get_y() - anchorOffsetDist
         };
+        console.log( "Calculated new center: (%s, %s)", newCenter.x, newCenter.y);
 
         var newCharm = that.spawnCharm(newCenter.x, newCenter.y, anchorOffsetDist);
         var newLinkBody = newCharm.body; // that.physics.createBox(newCenter.x, newCenter.y, 0, linkWidth, linkHeight, 'dynamic');
@@ -113,15 +115,20 @@ MTOItem.prototype.testDangle = function() {
 
     var NUM_LINKS = 1;
     for (var i = 0; i < NUM_LINKS; i++) {
+        var lastBodyPos = lastBody.GetPosition();
+        this.logVec("Previous body position", lastBody.GetPosition());
+        this.logVec("Last anchor offset", lastAnchorOffset);
+
         var created = createAndAttachLink( lastBody, lastAnchorOffset );
         lastBody = created.newLinkBody;
         lastAnchorOffset = created.newAnchorOffset;
         this.testLinkCharms.push( created.newCharm );
     }
-    //console.log(" === testLinkCharms");
-    //console.log(this.testLinkCharms);
 };
 
+MTOItem.prototype.logVec = function(label, boxVec) {
+    console.log("Dumping vec \"%s\": (%s, %s)", label, boxVec.get_x(), boxVec.get_y());
+}
 
 MTOItem.prototype.iterateCharms = function(callback) {
     return this.charmList.map(callback);
@@ -129,6 +136,7 @@ MTOItem.prototype.iterateCharms = function(callback) {
 
 MTOItem.prototype.render = function() {
     this.wrappedCanvas.clean();
+    this.wrappedCanvas.drawGrid(200, 200, 25);
     this.drawCharms();
     this.drawGround();
 
@@ -143,9 +151,9 @@ MTOItem.prototype.syncPhysics = function() {
     if (this.testLinkCharms) {
         this.testLinkCharms.map(function(charm, i) {
             var physData = this.physics.summarize(charm.body);
-            if ( i == 0 ) {
-                console.log(physData);
-            }
+            //if ( i == 0 ) {
+                //console.log(physData);
+            //}
             charm.pos.x = physData.x;
             charm.pos.y = physData.y;
             charm.angleInRadians = physData.angle;
