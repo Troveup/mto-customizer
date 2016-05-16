@@ -2,6 +2,7 @@
 var WrappedCanvas = require("./wrapped-canvas.js");
 var Charm = require("./charm.js");
 var Box2DHelper = require("./box2d-helper.js");
+var Box2D = require("box2d");
 
 function MTOItem(canvasID, baseSpec, charmSpecList) {
     this.baseChain = new Charm(baseSpec);
@@ -23,7 +24,7 @@ function MTOItem(canvasID, baseSpec, charmSpecList) {
     //this.chainList
 }
 
-MTOItem.prototype.spawnCharm = function(x, y, anchorOffset) {
+MTOItem.prototype.spawnCharm = function(x, y, anchorOffsetDist) {
     var linkWidth = 112 / 3;
     var linkHeight = 350 / 3;
     var proceduralSpec = {
@@ -32,8 +33,8 @@ MTOItem.prototype.spawnCharm = function(x, y, anchorOffset) {
         rotation: 0,
         width: linkWidth,
         height: linkHeight,
-        upperAnchor: new THREE.Vector2(0, anchorOffset),
-        lowerAnchor: new THREE.Vector2(0, -anchorOffset)
+        upperAnchor: new THREE.Vector2(0, anchorOffsetDist),
+        lowerAnchor: new THREE.Vector2(0, -anchorOffsetDist)
     };
 
     var c = new Charm(proceduralSpec);
@@ -72,29 +73,55 @@ MTOItem.prototype.addCharmsToSim = function() {
 };
 
 MTOItem.prototype.testDangle = function() {
+
     this.roofBody = this.physics.createBox(roofX, roofY, 0, oblongWidth, oblongHeight, 'static');
     this.groundBody = this.physics.createBox(groundX, groundY, 0, oblongWidth, oblongHeight, 'static');
 
-    this.testLinks = [];
+    this.testLinkCharms = [];
 
-    var anchorOffset = 46;
-    var lastPos = {
-        x: roofX,
-        y: roofY - anchorOffset
-    };
-    var lastBody = this.roofBody;
+    var anchorOffsetDist = 46;
+    var linkWidth = 112 / 3;
+    var linkHeight = 350 / 3;
 
-    var newCharm;
-    var numLinks = 3;
-    for (var i = 0; i < numLinks; i++) {
-        newCharm = this.spawnCharm(lastPos.x, lastPos.y, anchorOffset);
+    var that = this;
+    function createAndAttachLink(lastBody, lastAnchorOffset) {
+        // new link center = lastBody pos + lastAnchorOffset + anchorOffsetDist
+        var lastPos = lastBody.GetPosition();
+        var newCenter = {
+            x: lastPos.get_x() + lastAnchorOffset.get_x(),
+            y: lastPos.get_y() + lastAnchorOffset.get_y() - anchorOffsetDist
+        };
 
-        newCharm.upperAnchor
+        var newCharm = that.spawnCharm(newCenter.x, newCenter.y, anchorOffsetDist);
+        var newLinkBody = newCharm.body; // that.physics.createBox(newCenter.x, newCenter.y, 0, linkWidth, linkHeight, 'dynamic');
 
-        this.testLinks.push( newCharm );
-        lastPos.y -= 2 * anchorOffset;
+        // add revolute joint attaching last body using parameters, and definition of new body
+        var joint_def = new Box2D.b2RevoluteJointDef();
+		joint_def.set_bodyA( lastBody );
+		joint_def.set_localAnchorA( lastAnchorOffset );
+		joint_def.set_bodyB( newLinkBody );
+		joint_def.set_localAnchorB( new Box2D.b2Vec2(0, -anchorOffsetDist) );
+
+        that.physics.world.CreateJoint(joint_def);
+
+        var newAnchorOffset = new Box2D.b2Vec2(0, -anchorOffsetDist);
+        return { newCharm, newLinkBody, newAnchorOffset };
     }
+
+    var lastBody = this.roofBody;
+    var lastAnchorOffset = new Box2D.b2Vec2( 0, 0 );
+
+    var NUM_LINKS = 1;
+    for (var i = 0; i < NUM_LINKS; i++) {
+        var created = createAndAttachLink( lastBody, lastAnchorOffset );
+        lastBody = created.newLinkBody;
+        lastAnchorOffset = created.newAnchorOffset;
+        this.testLinkCharms.push( created.newCharm );
+    }
+    //console.log(" === testLinkCharms");
+    //console.log(this.testLinkCharms);
 };
+
 
 MTOItem.prototype.iterateCharms = function(callback) {
     return this.charmList.map(callback);
@@ -113,6 +140,18 @@ MTOItem.prototype.drawGround = function() {
 };
 
 MTOItem.prototype.syncPhysics = function() {
+    if (this.testLinkCharms) {
+        this.testLinkCharms.map(function(charm, i) {
+            var physData = this.physics.summarize(charm.body);
+            if ( i == 0 ) {
+                console.log(physData);
+            }
+            charm.pos.x = physData.x;
+            charm.pos.y = physData.y;
+            charm.angleInRadians = physData.angle;
+        }.bind(this));
+        return;
+    }
     this.iterateCharms(function(charm) {
         var physData = this.physics.summarize(charm.body);
         charm.pos.x = physData.x;
@@ -122,11 +161,9 @@ MTOItem.prototype.syncPhysics = function() {
 };
 
 MTOItem.prototype.drawCharms = function() {
-    if (this.testLinks) {
-        this.testLinks.map(function(charm) {
-            console.log("Debug pos: ", charm.pos);
-            this.wrappedCanvas.drawRectangle(charm.pos.x, charm.pos.y, charm.angleInRadians, charm.width+2, charm.height+2, 'black');
-            this.wrappedCanvas.drawRectangle(charm.pos.x, charm.pos.y, charm.angleInRadians, charm.width, charm.height, 'white');
+    if (this.testLinkCharms) {
+        this.testLinkCharms.map(function(charm) {
+            this.wrappedCanvas.strokeRectangle(charm.pos.x, charm.pos.y, charm.angleInRadians, charm.width+2, charm.height+2, 'black');
         }.bind(this));
         return;
     }

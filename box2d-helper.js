@@ -7,7 +7,7 @@ function Box2DHelper() {
 };
 
 Box2DHelper.prototype.init = function() {
-    var earthGravity = new Box2D.b2Vec2( 0.0, -9.8 );
+    var earthGravity = new Box2D.b2Vec2( 3.0, -9.8 );
     this.world = new Box2D.b2World( earthGravity );
 
     this.bodyDef = new Box2D.b2BodyDef();

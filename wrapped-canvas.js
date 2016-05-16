@@ -87,6 +87,23 @@ WrappedCanvas.prototype.drawImage = function(x, y, angleInRadians, width, height
     this.context.restore();
 }
 
+WrappedCanvas.prototype.strokeRectangle = function(x, y, angleInRadians, width, height, style) {
+    this.context.save();
+    this.context.fillStyle = style;
+    this.context.translate(x, y);
+    this.context.rotate(angleInRadians);
+
+    var hx = width / 2;
+    var hy = height / 2;
+
+    this.drawLine( -hx, -hy, -hx,  hy);
+    this.drawLine(  hx, -hy,  hx,  hy);
+    this.drawLine( -hx, -hy,  hx, -hy);
+    this.drawLine( -hx,  hy,  hx,  hy);
+
+    this.context.restore();
+}
+
 WrappedCanvas.prototype.drawRectangle = function(x, y, angleInRadians, width, height, style) {
     this.context.save();
     this.context.fillStyle = style;

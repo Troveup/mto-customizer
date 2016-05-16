@@ -72,6 +72,18 @@ function loop() {
     item.render();
 }
 
+function physicsLoop() {
+    requestAnimationFrame(physicsLoop);
+
+    currTime = Date.now();
+    dt = currTime - lastTime;
+    lastTime = currTime;
+
+    item.timeStep(dt);
+    item.syncPhysics();
+    item.render();
+}
+
 var testCanvas;
 function main() {
     //testCanvas = new WrappedCanvas();
@@ -81,8 +93,8 @@ function main() {
 
     item = new MTOItem('canvas', necklaceSpec, componentSpecs);
     item.testDangle();
-    item.drawCharms();
 
+    physicsLoop();
     //item.loadAssets().then(function() {
         //item.addCharmsToSim();
         //loop();
