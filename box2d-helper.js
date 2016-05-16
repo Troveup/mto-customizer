@@ -7,7 +7,7 @@ function Box2DHelper() {
 };
 
 Box2DHelper.prototype.init = function() {
-    var earthGravity = new Box2D.b2Vec2( 3.0, -9.8 );
+    var earthGravity = new Box2D.b2Vec2( 0.0, -9.8 );
     this.world = new Box2D.b2World( earthGravity );
 
     this.bodyDef = new Box2D.b2BodyDef();
@@ -53,7 +53,7 @@ console.warn("Don't hardcode physics time step delta");
 Box2DHelper.prototype.tick = function(dt) {
     var realDeltaInSeconds = dt / 1000;
     var desiredDelta = 1/60;
-    this.world.Step(desiredDelta, 2, 2);
+    this.world.Step(realDeltaInSeconds, 2, 2);
 
     // is this necessary?
     //this.world.ClearForces();
