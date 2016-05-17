@@ -5,28 +5,30 @@ var MTOItem = require("./mto-item.js");
 
 var necklaceSpec = {
     imgURL: "/resources/img/demo-chain.png",
-    position: new THREE.Vector2(300, 50), // in untransformed grid, need to figure out less hacky way for this
-    width: 600,
-    height: 800,
+    position: new THREE.Vector2(30, 5), // in untransformed grid, need to figure out less hacky way for this
+    width: 60,
+    height: 80,
     anchors: [
-        { offset: new THREE.Vector2(-50, 0) },
-        { offset: new THREE.Vector2(50, 0) }
+        { offset: new THREE.Vector2(-5, 0) },
+        { offset: new THREE.Vector2(5, 0) }
     ]
 };
 
-var linkWidth = 112 / 3;
-var linkHeight = 350 / 3;
+var linkWidth = 112 / 30;
+var linkHeight = 350 / 30;
+
+var anchorOffsetDist = 4.6;
 
 var DEG_TO_RAD = Math.PI / 180;
 var componentSpecs = [
     {
         imgURL: "/resources/img/charm-link.png",
-        position: new THREE.Vector2(-50, 0),
+        position: new THREE.Vector2(-5, 0),
         width: linkWidth,
         height: linkHeight,
         anchors: [
-            { offset: new THREE.Vector2(0, 46) },
-            { offset: new THREE.Vector2(0, -46) }
+            { offset: new THREE.Vector2(0, anchorOffsetDist) },
+            { offset: new THREE.Vector2(0, -anchorOffsetDist) }
         ]
     },
     {
@@ -36,17 +38,17 @@ var componentSpecs = [
         width: linkWidth,
         height: linkHeight,
         anchors: [
-            { offset: new THREE.Vector2(0, 46) },
-            { offset: new THREE.Vector2(0, -46) }
+            { offset: new THREE.Vector2(0, anchorOffsetDist) },
+            { offset: new THREE.Vector2(0, -anchorOffsetDist) }
         ],
     },
     {
         imgURL: "/resources/img/charm-link.png",
-        position: new THREE.Vector2(50, 0),
+        position: new THREE.Vector2(5, 0),
         width: linkWidth,
         height: linkHeight,
-        upperAnchor: new THREE.Vector2(0, 46),
-        lowerAnchor: new THREE.Vector2(0, -46)
+        upperAnchor: new THREE.Vector2(0, anchorOffsetDist),
+        lowerAnchor: new THREE.Vector2(0, -anchorOffsetDist)
     }
 ];
 

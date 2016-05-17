@@ -51,12 +51,12 @@ Box2DHelper.prototype.summarize = function(body) {
 
 // FIXME: figure out way around extremely long deleta
 // watch for the tab losing focus, if it does reset the `lastTime` upon returning to the tab
-var timeScale = 4;
-console.warn("physics running at %s x hardcoded time delta", timeScale);
+var timeScale = 1;
+console.log("physics running at %s x real time delta", timeScale);
 Box2DHelper.prototype.tick = function(dt) {
     var realDeltaInSeconds = dt / 1000;
     var desiredDelta = 1/60;
-    this.world.Step(desiredDelta*timeScale, 2, 2);
+    this.world.Step(realDeltaInSeconds*timeScale, 2, 2);
 
     // is this necessary?
     this.world.ClearForces();

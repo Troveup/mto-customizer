@@ -12,7 +12,7 @@ function MTOItem(canvasID, baseSpec, charmSpecList) {
 
     this.wrappedCanvas = new WrappedCanvas(canvasID);
     this.wrappedCanvas.setup({
-        //pixelsToMeter: 0.5
+        pixelsToMeter: 10
     });
 
     this.selectedCharm = null;
@@ -47,11 +47,11 @@ MTOItem.prototype.spawnCharm = function(x, y, anchorOffsetDist) {
 
 
 var groundX = 0;
-var groundY = -200;
+var groundY = -20;
 var roofX = 0;
-var roofY = 295;
-var oblongWidth = 600;
-var oblongHeight = 10;
+var roofY = 29.5;
+var oblongWidth = 60;
+var oblongHeight = 1;
 
 MTOItem.prototype.loadAssets = function() {
     var loadingPromises = this.charmList.map(function(charm){
