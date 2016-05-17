@@ -12,7 +12,7 @@ function MTOItem(canvasID, baseSpec, charmSpecList) {
 
     this.wrappedCanvas = new WrappedCanvas(canvasID);
     this.wrappedCanvas.setup({
-        pixelsToMeter: 0.5
+        //pixelsToMeter: 0.5
     });
 
     this.selectedCharm = null;

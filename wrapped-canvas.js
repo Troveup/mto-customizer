@@ -36,18 +36,18 @@ WrappedCanvas.prototype.clean = function() {
 WrappedCanvas.prototype.setup = function(opts) {
     var dx = this.canvas.width / 2;
     var dy = this.canvas.height / 2;
-    var scaleFactor = opts.pixelsToMeter || 1;
+    this.scaleFactor = opts.pixelsToMeter || 1;
     this.context.scale(1, -1);
     this.context.translate(dx, dy - this.canvas.height);
-    this.context.scale(scaleFactor, scaleFactor);
+    this.context.scale(this.scaleFactor, this.scaleFactor);
  
     this.origin = { x: dx, y: dx };
 };
 
 WrappedCanvas.prototype.getTransformedCoords = function(clientX, clientY) {
     return {
-        x: clientX - this.origin.x - this.boundingRectangle.left,
-        y: this.boundingRectangle.bottom - clientY - this.origin.y
+        x: (clientX - this.origin.x - this.boundingRectangle.left) / this.scaleFactor,
+        y: (this.boundingRectangle.bottom - clientY - this.origin.y) / this.scaleFactor
     };
 }
 
