@@ -112,84 +112,24 @@ MTOItem.prototype.stepPhysics = function(dt) {
     }.bind(this));
 };
 
+MTOItem.prototype.forConnectedCharms = function(seedCharm, fn) {
+    console.log( "=== Executing forConnectedCharms..." );
+    var checkQueue = [ seedCharm ];
+    for (var i = 0; i < checkQueue.length; i++) {
+        fn(checkQueue[i]);
+        console.log( "bleep bloop", checkQueue[i] );
+    }
+};
+
 MTOItem.prototype.sortAnchorsOnFocus = function(detachedParent) {
     // for all connected charms
     var sel = this.selectedCharm;
     console.warn("TODO: implement sortAnchorsBySelectedCharm(), should be two lists");
-};
 
-
-/*FlatModel.prototype.anchorScan = function(queryComponent) {
-    var cutoffRadius = 30;
-    var result = {
-        snap: false
-    }
-
-    // assume top anchor must be open, so seek all open bottom anchors
-    this.eachComponent(function(targetComponent) {
-        if (targetComponent === queryComponent) {
-            return;
-        }
-
-        var targetSite = targetComponent.anchors.lower;
-        if (targetSite.attachedComponent) {
-            return;
-        }
-
-        var tx = targetComponent.position.x + targetSite.offset.x
-        var ty = targetComponent.position.y + targetSite.offset.y
-
-        var sourceSite = queryComponent.anchors.upper;
-        var qx = queryComponent.position.x + sourceSite.offset.x
-        var qy = queryComponent.position.y + sourceSite.offset.y
-
-        var dx = tx - qx;
-        var dy = ty - qy;
-
-        var dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < cutoffRadius) {
-            result.snap = true;
-            result.upperAnchor = sourceSite;
-            result.lowerAnchor = targetSite;
-            result.freshAttachment = targetComponent;
-            result.params = {
-                x: dx,
-                y: dy
-            }
-        }
+    debugger;
+    this.forConnectedCharms(detachedParent, function(charm) {
+        console.log("In custom charm iterator: ", charm);
     });
-    return result;
-}
-
-Charm.prototype.compareAnchors = function(comparison) {
-    var lenA = this.anchors.length;
-    var lenB = comparison.anchors.length;
-    var pointA = new THREE.Vector2();
-    var pointB = new THREE.Vector2();
-    var overlapDiameter = 10;
-    for (var i = 0; i < lenA; i++) {
-        for (var j = i; j < lenB; j++) {
-            pointA.copy(this.anchors[i].position).add(this.position);
-            pointB.copy(comparison.anchors[j].position).add(comparison.position);
-            var dist = pointA.distanceTo(pointB);
-            if (dist < overlapDiameter) {
-                return {
-                    hit: true,
-                    dist: dist,
-                    indexA: i,
-                    indexB: j
-                }
-            }
-        }
-    }
-
-    return {
-        hit: false
-    };
-}
-*/
-
-MTOItem.prototype.iterateAnchors = function(callback) {
 };
 
 MTOItem.prototype.getClosestCharmClicked = function(mousePos) {
@@ -221,13 +161,15 @@ MTOItem.prototype.detachParentCharm = function(selectedCharm) {
 };
 
 MTOItem.prototype.handleMousedown = function(evt) {
-    console.log("event passed back: ", evt);
     var mousePos = this.wrappedCanvas.getTransformedCoords(evt.clientX, evt.clientY);
     var selected = this.getClosestCharmClicked(mousePos);
     if (selected) {
         this.selectedCharm = selected;
 
         var parentCharm = this.detachParentCharm(selected);
+        console.log("Detached parent: ", parentCharm);
+
+        // instead of parentCharm should use base chain as seed 
         this.sortAnchorsOnFocus(parentCharm);
 
         var body = this.selectedCharm.body;
@@ -237,10 +179,9 @@ MTOItem.prototype.handleMousedown = function(evt) {
 
         this.selectedCharm.status = 'selected';
     }
-    console.log("Mousedown, selectedCharm: ", this.selectedCharm);
 };
 
-MTOItem.prototype.handleMouseup = function(callback) {
+MTOItem.prototype.handleMouseup = function(evt) {
     if (this.selectedCharm) {
         this.selectedCharm.status = 'normal';
         this.selectedCharm.body.SetGravityScale(1);
@@ -255,11 +196,10 @@ MTOItem.prototype.handleMouseup = function(callback) {
             //this.selectedCharm.translateChain(anchorResult.params.x, anchorResult.params.y)
         //}
     }
-    console.log("Mouseup, selectedCharm: ", this.selectedCharm);
 };
 
 var oldMousePos;
-MTOItem.prototype.handleMousemove = function(callback) {
+MTOItem.prototype.handleMousemove = function(evt) {
     var mousePos = this.wrappedCanvas.getTransformedCoords(evt.clientX, evt.clientY);
 
     if (this.selectedCharm) {

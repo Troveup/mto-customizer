@@ -23,13 +23,6 @@ function Charm(spec) {
     this.status = 'normal';
 }
 
-//Component.prototype.getGlobalAnchorPos = function(index) {
-    //return {
-        //x: this.anchors[index].position.x + this.position.x,
-        //y: this.anchors[index].position.y + this.position.y
-    //}
-//};
-
 Charm.prototype.translate = function(oldPhys, dx, dy) {
     var b2Pos = new Box2D.b2Vec2( oldPhys.x + dx, oldPhys.y + dy);
     this.body.SetTransform( b2Pos, oldPhys.angle );

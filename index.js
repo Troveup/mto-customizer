@@ -71,14 +71,14 @@ var testCanvas;
 function main() {
     item = new MTOItem('canvas', necklaceSpec, componentSpecs);
     item.loadAssets().then(function() {
+        canvas.addEventListener('mousedown', item.handleMousedown.bind(item));
+        canvas.addEventListener('mouseup', item.handleMouseup.bind(item));
+        canvas.addEventListener('mousemove', item.handleMousemove.bind(item), false);
         item.addCharmsToSim();
         loop();
     });
 }
 
-canvas.addEventListener('mousedown', item.handleMousedown.bind(item));
-canvas.addEventListener('mouseup', item.handleMouseup.bind(item));
-canvas.addEventListener('mousemove', item.handleMousemove.bind(item), false);
 
 module.exports = { main };
 
