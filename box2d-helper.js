@@ -8,6 +8,7 @@ function Box2DHelper() {
     this.bodies = [];
 };
 
+
 Box2DHelper.prototype.init = function() {
     var earthGravity = new Box2D.b2Vec2( 0.0, -9.8 );
     this.world = new Box2D.b2World( earthGravity );
@@ -39,6 +40,20 @@ Box2DHelper.prototype.createBox = function(x, y, desiredAngle, width, height, ty
 
     return newBody;
 };
+
+Box2DHelper.prototype.createJoint = function(bodyA, vectorLikeA, bodyB, vectorLikeB) {
+    var offsetA = new Box2D.b2Vec2(vectorLikeA.x, vectorLikeA.y);
+    var offsetB = new Box2D.b2Vec2(vectorLikeB.x, vectorLikeB.y);
+
+    var joint_def = new Box2D.b2RevoluteJointDef();
+    joint_def.set_bodyA( bodyA );
+    joint_def.set_localAnchorA( offsetA );
+    joint_def.set_bodyB( bodyB );
+    joint_def.set_localAnchorB( offsetB );
+
+    return Box2D.castObject( this.world.CreateJoint(joint_def), Box2D.b2RevoluteJoint );
+}
+
 
 Box2DHelper.prototype.summarize = function(body) {
     var bpos = body.GetPosition();

@@ -188,15 +188,55 @@ MTOItem.prototype.detachParentCharm = function(selectedCharm) {
     return null;
 };
 
+console.warn("TODO: fix buggy logic for detecting anchor collisions");
+MTOItem.prototype.findAnchorCollisions = function() {
+
+    var bestResult = null;
+    for (var i = 0; i < this.openFocusAnchors.length; i++) {
+        for (var j = 0; j < this.openRootAnchors.length; j++) {
+            var anchorMovable = this.openFocusAnchors[i];
+            var anchorStable = this.openRootAnchors[j];
+
+            var result = anchorMovable.checkCollision(anchorStable, 10);
+            if (result.hit) {
+                var physData = this.physics.summarize(anchorMovable.ownerCharm.body);
+                anchorMovable.ownerCharm.translate(physData, result.dx, result.dy);
+
+                // FIXME: check all anchors for closest or short circuit? probably former
+                this.attachAnchors(anchorMovable, anchorStable);
+                return;
+            }
+
+            //if (result.hit && (!bestResult || result.separation < bestResult.separation)) {
+                //bestResult = result;
+            //}
+        }
+    }
+
+    //if (bestResult) {
+        //var physData = this.physics.summarize(anchorMovable.ownerCharm.body);
+        //anchorMovable.ownerCharm.translate(physData, result.dx, result.dy);
+    //}
+};
+
+MTOItem.prototype.attachAnchors = function(anchorA, anchorB) {
+    var bodyA = anchorA.ownerCharm.body;
+    var bodyB = anchorB.ownerCharm.body;
+
+    var newJoint = this.physics.createJoint(bodyA, anchorA.offset, bodyB, anchorB.offset);
+    anchorA.joint = newJoint;
+    anchorB.joint = newJoint;
+    anchorA.attachedAnchor = anchorB;
+    anchorB.attachedAnchor = anchorA;
+};
+
 MTOItem.prototype.handleMousedown = function(evt) {
     var mousePos = this.wrappedCanvas.getTransformedCoords(evt.clientX, evt.clientY);
     var selected = this.getClosestCharmClicked(mousePos);
     if (selected) {
         this.selectedCharm = selected;
 
-        var parentCharm = this.detachParentCharm(selected);
-        console.log("Detached parent: ", parentCharm);
-
+        this.detachParentCharm(selected);
         this.sortAnchorsOnFocus();
 
         var body = this.selectedCharm.body;
@@ -224,28 +264,6 @@ MTOItem.prototype.handleMouseup = function(evt) {
 
             //this.selectedCharm.translateChain(anchorResult.params.x, anchorResult.params.y)
         //}
-    }
-};
-
-MTOItem.prototype.findAnchorCollisions = function() {
-    console.warn("TODO: fix buggy logic for detecting anchor collisions");
-
-    var bestResult = null;
-    for (var i = 0; i < this.openFocusAnchors.length; i++) {
-        for (var j = 0; j < this.openRootAnchors.length; j++) {
-            var anchorMovable = this.openFocusAnchors[i];
-            var anchorStable = this.openRootAnchors[j];
-
-            var result = anchorMovable.checkCollision(anchorStable, 10);
-            if (result.hit && (!bestResult || result.separation < bestResult.separation)) {
-                bestResult = result;
-            }
-        }
-    }
-
-    if (bestResult) {
-        var physData = this.physics.summarize(anchorMovable.ownerCharm.body);
-        anchorMovable.ownerCharm.translate(physData, result.dx, result.dy);
     }
 };
 

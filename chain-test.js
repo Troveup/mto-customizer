@@ -35,7 +35,7 @@ MTOItem.prototype.testDangle = function() {
 		joint_def.set_bodyB( newLinkBody );
 		joint_def.set_localAnchorB( new Box2D.b2Vec2(0, anchorOffsetDist) );
 
-        that.physics.world.CreateJoint(joint_def);
+        var revoluteJoint = Box2D.castObject( that.physics.world.CreateJoint(joint_def), Box2D.b2RevoluteJoint );
 
         var newAnchorOffset = new Box2D.b2Vec2(0, -anchorOffsetDist);
         return { newCharm, newLinkBody, newAnchorOffset };
