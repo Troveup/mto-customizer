@@ -43,10 +43,6 @@ MTOItem.prototype.spawnCharm = function(x, y, anchorOffsetDist) {
 }
 
 
-MTOItem.prototype.timeStep = function(dt) {
-    this.physics.tick(dt);
-}
-
 var groundX = 0;
 var groundY = -200;
 var roofX = 0;
@@ -148,20 +144,10 @@ MTOItem.prototype.drawGround = function() {
     this.wrappedCanvas.drawRectangle(g.x, g.y, g.angle, oblongWidth, oblongHeight, 'black');
 };
 
-MTOItem.prototype.syncPhysics = function() {
-    //if (this.testLinkCharms) {
-        //this.testLinkCharms.map(function(charm, i) {
-            //var physData = this.physics.summarize(charm.body);
-            ////if ( i == 0 ) {
-                ////console.log(physData);
-            ////}
-            //charm.pos.x = physData.x;
-            //charm.pos.y = physData.y;
-            //charm.angleInRadians = physData.angle;
-        //}.bind(this));
-        //return;
-    //}
+MTOItem.prototype.stepPhysics = function() {
+    this.physics.tick(dt);
 
+    // sync physics body data with containg Charm object
     this.iterateCharms(function(charm) {
         var physData = this.physics.summarize(charm.body);
         charm.pos.x = physData.x;
@@ -171,13 +157,6 @@ MTOItem.prototype.syncPhysics = function() {
 };
 
 MTOItem.prototype.drawCharms = function() {
-    //if (this.testLinkCharms) {
-        //this.testLinkCharms.map(function(charm) {
-            //this.wrappedCanvas.strokeRectangle(charm.pos.x, charm.pos.y, charm.angleInRadians, charm.width+2, charm.height+2, 'black');
-        //}.bind(this));
-        //return;
-    //}
-
     this.iterateCharms(function(charm) {
         this.wrappedCanvas.drawRectangle(charm.pos.x, charm.pos.y, charm.angleInRadians, charm.width+2, charm.height+2, 'black');
         this.wrappedCanvas.drawRectangle(charm.pos.x, charm.pos.y, charm.angleInRadians, charm.width, charm.height, 'white');

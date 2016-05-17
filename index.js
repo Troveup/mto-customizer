@@ -75,18 +75,12 @@ function loop() {
     dt = currTime - lastTime;
     lastTime = currTime;
 
-    item.timeStep(dt);
-    item.syncPhysics();
+    item.stepPhysics();
     item.render();
 }
 
 var testCanvas;
 function main() {
-    //testCanvas = new WrappedCanvas();
-    //testCanvas.centerOrigin();
-    //testCanvas.drawRectangle(s.x, s.y, s.rot, 50, 50, 'orange');
-    //animLoop();
-
     item = new MTOItem('canvas', necklaceSpec, componentSpecs);
     item.loadAssets().then(function() {
         item.addCharmsToSim();
