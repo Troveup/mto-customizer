@@ -11,10 +11,13 @@ function MTOItem(canvasID, baseSpec, charmSpecList) {
     });
 
     this.wrappedCanvas = new WrappedCanvas(canvasID);
-    this.wrappedCanvas.centerOrigin();
+    this.wrappedCanvas.setup({
+        pixelsToMeter: 0.5
+    });
 
     this.selectedCharm = null;
     this.groundBody = null;
+    this.roofBody = null;
 
     this.physics = new Box2DHelper();
     this.physics.init();
@@ -46,7 +49,7 @@ MTOItem.prototype.spawnCharm = function(x, y, anchorOffsetDist) {
 var groundX = 0;
 var groundY = -200;
 var roofX = 0;
-var roofY = 200;
+var roofY = 295;
 var oblongWidth = 600;
 var oblongHeight = 10;
 
@@ -62,6 +65,7 @@ MTOItem.prototype.loadAssets = function() {
 MTOItem.prototype.addCharmsToSim = function() {
     // this is a debug line, should eventually remove
     this.groundBody = this.physics.createBox(groundX, groundY, 0, oblongWidth, oblongHeight, 'static');
+    this.roofBody = this.physics.createBox(roofX, roofY, 0, oblongWidth, oblongHeight, 'static');
 
     this.charmList.map(function(c){
         c.body = this.physics.createBox(c.pos.x, c.pos.y, c.angleInRadians, c.width, c.height, 'dynamic');
@@ -149,6 +153,9 @@ MTOItem.prototype.render = function() {
 MTOItem.prototype.drawGround = function() {
     var g = this.physics.summarize(this.groundBody);
     this.wrappedCanvas.drawRectangle(g.x, g.y, g.angle, oblongWidth, oblongHeight, 'black');
+
+    var r = this.physics.summarize(this.roofBody);
+    this.wrappedCanvas.drawRectangle(r.x, r.y, r.angle, oblongWidth, oblongHeight, 'black');
 };
 
 MTOItem.prototype.stepPhysics = function(dt) {

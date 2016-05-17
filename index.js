@@ -94,8 +94,8 @@ canvas.addEventListener('mousedown', function(evt) {
 
         var body = item.selectedCharm.body;
         body.SetGravityScale(0);
-        body.SetLinearVelocity( Box2D.b2Vec2( 0, 0) ); //moving up and left 5 units per second
-        body.SetAngularVelocity( 0 ); //90 degrees per second clockwise
+        body.SetLinearVelocity( Box2D.b2Vec2( 0, 0) );
+        body.SetAngularVelocity( 0 );
 
         // `parentAnchor` should be cleared if not connecting to a parent charm anchor
         var pa = item.selectedCharm.parentAnchor;
@@ -115,7 +115,6 @@ canvas.addEventListener('mouseup', function(evt) {
     if (item.selectedCharm) {
         item.selectedCharm.status = 'normal';
         item.selectedCharm.body.SetGravityScale(1);
-        //item.selectedCharm.body.set_type( Box2D.b2_dynamicBody );
         item.selectedCharm = null;
 
         console.log("TODO: scan anchors and make connection if detected");

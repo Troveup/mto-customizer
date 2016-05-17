@@ -33,17 +33,15 @@ WrappedCanvas.prototype.clean = function() {
     this.context.clearRect( x, y, width, height );
 }
 
-WrappedCanvas.prototype.centerOrigin = function() {
+WrappedCanvas.prototype.setup = function(opts) {
     var dx = this.canvas.width / 2;
     var dy = this.canvas.height / 2;
-    this.setOrigin(dx, dy);
-};
-
-WrappedCanvas.prototype.setOrigin = function(xOffset, yOffset) {
+    var scaleFactor = opts.pixelsToMeter || 1;
     this.context.scale(1, -1);
-    this.context.translate(xOffset, yOffset - this.canvas.height);
+    this.context.translate(dx, dy - this.canvas.height);
+    this.context.scale(scaleFactor, scaleFactor);
  
-    this.origin = { x: xOffset, y: yOffset };
+    this.origin = { x: dx, y: dx };
 };
 
 WrappedCanvas.prototype.getTransformedCoords = function(clientX, clientY) {
