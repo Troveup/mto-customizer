@@ -146,6 +146,7 @@ MTOItem.prototype.render = function() {
             this.wrappedCanvas.drawCircle(o.x, o.y, 5, 'black');
         }.bind(this));
         this.wrappedCanvas.strokeRectangle(charm.pos.x, charm.pos.y, 0, charm.width, charm.height, 'black'); // FIXME: drawing real hitbox
+        this.wrappedCanvas.strokeRectangle(charm.pos.x, charm.pos.y, charm.angleInRadians, charm.width, charm.height, 'black'); // FIXME: drawing real hitbox
     }.bind(this));
 
     this.drawGround();

@@ -40,15 +40,17 @@ var componentSpecs = [
         anchors: [
             { offset: new THREE.Vector2(0, anchorOffsetDist) },
             { offset: new THREE.Vector2(0, -anchorOffsetDist) }
-        ],
+        ]
     },
     {
         imgURL: "/resources/img/charm-link.png",
         position: new THREE.Vector2(5, 0),
         width: linkWidth,
         height: linkHeight,
-        upperAnchor: new THREE.Vector2(0, anchorOffsetDist),
-        lowerAnchor: new THREE.Vector2(0, -anchorOffsetDist)
+        anchors: [
+            { offset: new THREE.Vector2(0, anchorOffsetDist) },
+            { offset: new THREE.Vector2(0, -anchorOffsetDist) }
+        ]
     }
 ];
 
