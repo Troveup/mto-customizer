@@ -72,7 +72,7 @@ MTOItem.prototype.addCharmsToSim = function() {
     }.bind(this));
 };
 
-MTOItem.prototype.testDangle = function() {
+/*MTOItem.prototype.testDangle = function() {
 
     this.roofBody = this.physics.createBox(roofX, roofY, 0, oblongWidth, oblongHeight, 'static');
     this.groundBody = this.physics.createBox(groundX, groundY, 0, oblongWidth, oblongHeight, 'static');
@@ -126,11 +126,11 @@ MTOItem.prototype.testDangle = function() {
         lastAnchorOffset = created.newAnchorOffset;
         this.testLinkCharms.push( created.newCharm );
     }
-};
+};*/
 
-MTOItem.prototype.logVec = function(label, boxVec) {
-    console.log("Dumping vec \"%s\": (%s, %s)", label, boxVec.get_x(), boxVec.get_y());
-}
+//MTOItem.prototype.logVec = function(label, boxVec) {
+    //console.log("Dumping vec \"%s\": (%s, %s)", label, boxVec.get_x(), boxVec.get_y());
+//}
 
 MTOItem.prototype.iterateCharms = function(callback) {
     return this.charmList.map(callback);
@@ -149,18 +149,19 @@ MTOItem.prototype.drawGround = function() {
 };
 
 MTOItem.prototype.syncPhysics = function() {
-    if (this.testLinkCharms) {
-        this.testLinkCharms.map(function(charm, i) {
-            var physData = this.physics.summarize(charm.body);
-            //if ( i == 0 ) {
-                //console.log(physData);
-            //}
-            charm.pos.x = physData.x;
-            charm.pos.y = physData.y;
-            charm.angleInRadians = physData.angle;
-        }.bind(this));
-        return;
-    }
+    //if (this.testLinkCharms) {
+        //this.testLinkCharms.map(function(charm, i) {
+            //var physData = this.physics.summarize(charm.body);
+            ////if ( i == 0 ) {
+                ////console.log(physData);
+            ////}
+            //charm.pos.x = physData.x;
+            //charm.pos.y = physData.y;
+            //charm.angleInRadians = physData.angle;
+        //}.bind(this));
+        //return;
+    //}
+
     this.iterateCharms(function(charm) {
         var physData = this.physics.summarize(charm.body);
         charm.pos.x = physData.x;
@@ -170,12 +171,12 @@ MTOItem.prototype.syncPhysics = function() {
 };
 
 MTOItem.prototype.drawCharms = function() {
-    if (this.testLinkCharms) {
-        this.testLinkCharms.map(function(charm) {
-            this.wrappedCanvas.strokeRectangle(charm.pos.x, charm.pos.y, charm.angleInRadians, charm.width+2, charm.height+2, 'black');
-        }.bind(this));
-        return;
-    }
+    //if (this.testLinkCharms) {
+        //this.testLinkCharms.map(function(charm) {
+            //this.wrappedCanvas.strokeRectangle(charm.pos.x, charm.pos.y, charm.angleInRadians, charm.width+2, charm.height+2, 'black');
+        //}.bind(this));
+        //return;
+    //}
 
     this.iterateCharms(function(charm) {
         this.wrappedCanvas.drawRectangle(charm.pos.x, charm.pos.y, charm.angleInRadians, charm.width+2, charm.height+2, 'black');
@@ -229,33 +230,6 @@ MTOItem.prototype.drawCharms = function() {
     return result;
 }
 
-FlatModel.prototype.checkAnchors = function() {
-    var len = this.componentList.length;
-    var overlap = null;
-    for (var i = 0; i < len; i++) {
-        for (var j = i; j < len; j++) {
-            if (i == j) continue;
-
-            var objA = this.componentList[i];
-            var objB = this.componentList[j];
-            
-            var results = objA.compareAnchors(objB);
-            if (results.hit) {
-                if (!overlap || results.dist < overlap.dist) {
-                    overlap = {
-                        dist: results.dist,
-                        first: objA,
-                        second: objB,
-                        firstIndex: results.indexA,
-                        secondIndex: results.indexB
-                    };
-                }
-            }
-        }
-    }
-    return overlap;
-}*/
-
 /*MTOItem.prototype.drawAnchors = function() {
     var anchorRenderRadius = 3;
     var posX = this.position.x;
@@ -277,7 +251,34 @@ FlatModel.prototype.checkAnchors = function() {
 
         ctx.restore();
     });
-}*/
+}
+Charm.prototype.compareAnchors = function(comparison) {
+    var lenA = this.anchors.length;
+    var lenB = comparison.anchors.length;
+    var pointA = new THREE.Vector2();
+    var pointB = new THREE.Vector2();
+    var overlapDiameter = 10;
+    for (var i = 0; i < lenA; i++) {
+        for (var j = i; j < lenB; j++) {
+            pointA.copy(this.anchors[i].position).add(this.position);
+            pointB.copy(comparison.anchors[j].position).add(comparison.position);
+            var dist = pointA.distanceTo(pointB);
+            if (dist < overlapDiameter) {
+                return {
+                    hit: true,
+                    dist: dist,
+                    indexA: i,
+                    indexB: j
+                }
+            }
+        }
+    }
+
+    return {
+        hit: false
+    };
+}
+*/
 
 MTOItem.prototype.iterateAnchors = function(callback) {
 };

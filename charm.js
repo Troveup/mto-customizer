@@ -1,29 +1,22 @@
 
+var Anchor = require('./anchor.js');
+
 function Charm(spec) {
     this.imgURL = spec.imgURL;
     this.pos = spec.position;
     this.width = spec.width;
     this.height = spec.height;
-    this.anchors = {};
     this.angleInRadians = spec.rotation || 0;
 
-    if (spec.upperAnchor) {
-        this.anchors.upper = {
-            // debugStyle: anchorColors['normal'],
-            offset: spec.upperAnchor,
-            attachedComponent: null
-        }
-    }
+    this.parentAnchor = null;
+    this.anchors = Object.create(null);
+    var anchorSpecs = spec.anchors || [];
+    anchorSpecs.map(function(anchorSpec) {
+        anchorSpec.key = anchorSpec.offset.x + "," + anchorSpec.offset.y;
+        this.anchors[anchorSpec.key] = new Anchor(anchorSpec, this);
+    }.bind(this));
 
-    if (spec.lowerAnchor) {
-        this.anchors.lower = {
-            // debugStyle: anchorColors['normal'],
-            offset: spec.lowerAnchor,
-            attachedComponent: null
-        }
-    }
-
-    //this.setStatus('normal');
+    this.status = 'normal';
 }
 
 //Component.prototype.getGlobalAnchorPos = function(index) {
@@ -32,9 +25,6 @@ function Charm(spec) {
         //y: this.anchors[index].position.y + this.position.y
     //}
 //};
-//Component.prototype.setStatus = function(newStatus) {
-    //this.style = charmColors[newStatus];
-//}
 //Component.prototype.translateChain = function(x, y) {
     //this.position.x += x;
     //this.position.y += y;
@@ -86,6 +76,15 @@ Charm.prototype.hitCheck = function(checkPos) {
         hit: true,
         dist: displacement.length()
     };
+}
+
+// pass callback of form
+// fn(anchor, isParent)
+Charm.prototype.eachAnchor = function(fn) {
+    Object.keys(this.anchors).map(function(anchorKey) {
+        var anchor = this.anchors[anchorKey];
+        fn(anchor, anchor == this.parentAnchor);
+    }.bind(this));
 }
 
 // TODO: es6 changes
