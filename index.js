@@ -8,6 +8,10 @@ var necklaceSpec = {
     position: new THREE.Vector2(300, 50), // in untransformed grid, need to figure out less hacky way for this
     width: 600,
     height: 800,
+    anchors: [
+        { offset: new THREE.Vector2(-50, 0) },
+        { offset: new THREE.Vector2(50, 0) }
+    ]
 };
 
 var linkWidth = 112 / 3;
@@ -15,34 +19,16 @@ var linkHeight = 350 / 3;
 
 var DEG_TO_RAD = Math.PI / 180;
 var componentSpecs = [
-    //{
-        //imgURL: "/resources/img/charm-link.png",
-        //position: new THREE.Vector2(-50, 120),
-        //width: 5,
-        //height: 5,
-        //anchors: [
-            //{ offset: new THREE.Vector2(0, 0) }
-        //]
-    //},
-    //{
-        //imgURL: "/resources/img/charm-link.png",
-        //position: new THREE.Vector2(60, 120),
-        //width: 5,
-        //height: 5,
-        //anchors: [
-            //{ offset: new THREE.Vector2(0, 0) }
-        //]
-    //},
-    //{
-        //imgURL: "/resources/img/charm-link.png",
-        //position: new THREE.Vector2(-50, 0),
-        //width: linkWidth,
-        //height: linkHeight,
-        //anchors: [
-            //{ offset: new THREE.Vector2(0, 46) },
-            //{ offset: new THREE.Vector2(0, -46) }
-        //]
-    //},
+    {
+        imgURL: "/resources/img/charm-link.png",
+        position: new THREE.Vector2(-50, 0),
+        width: linkWidth,
+        height: linkHeight,
+        anchors: [
+            { offset: new THREE.Vector2(0, 46) },
+            { offset: new THREE.Vector2(0, -46) }
+        ]
+    },
     {
         imgURL: "/resources/img/charm-link.png",
         position: new THREE.Vector2(0, 0),
@@ -53,15 +39,15 @@ var componentSpecs = [
             { offset: new THREE.Vector2(0, 46) },
             { offset: new THREE.Vector2(0, -46) }
         ],
+    },
+    {
+        imgURL: "/resources/img/charm-link.png",
+        position: new THREE.Vector2(50, 0),
+        width: linkWidth,
+        height: linkHeight,
+        upperAnchor: new THREE.Vector2(0, 46),
+        lowerAnchor: new THREE.Vector2(0, -46)
     }
-    //{
-        //imgURL: "/resources/img/charm-link.png",
-        //position: new THREE.Vector2(50, 0),
-        //width: linkWidth,
-        //height: linkHeight,
-        //upperAnchor: new THREE.Vector2(0, 46),
-        //lowerAnchor: new THREE.Vector2(0, -46)
-    //}
 ];
 
 
@@ -75,7 +61,7 @@ function loop() {
     dt = currTime - lastTime;
     lastTime = currTime;
 
-    item.stepPhysics();
+    item.stepPhysics(dt);
     item.render();
 }
 
@@ -88,9 +74,71 @@ function main() {
     });
 }
 
-document.addEventListener('mousedown', function(evt) {
+canvas.addEventListener('mousedown', function(evt) {
     var mousePos = item.wrappedCanvas.getTransformedCoords(evt.clientX, evt.clientY);
+
+    var closestDist = Infinity;
+    item.charmList.map(function(charm) {
+        var result = charm.hitCheck(mousePos);
+        if (result.hit) {
+            if (!item.selectedCharm || result.dist < closestDist) {
+                item.selectedCharm = charm;
+                closestDist = result.dist;
+            }
+        }
+    });
+
+    if (item.selectedCharm) {
+        console.warn("TODO: implement sortAnchorsBySelectedCharm(), should be two lists");
+
+        // `parentAnchor` should be cleared if not connecting to a parent charm anchor
+        var pa = item.selectedCharm.parentAnchor;
+        if (pa) {
+            pa.attachedAnchor.attachedAnchor = null;
+            pa.attachedAnchor = null;
+            console.log("TODO: Destroy box2d joint: ", pa.joint);
+        }
+
+        item.selectedCharm.status = 'selected';
+    }
+    console.log("Mousedown, selectedCharm: ", item.selectedCharm);
 });
+
+canvas.addEventListener('mouseup', function(evt) {
+    if (item.selectedCharm) {
+        item.selectedCharm.status = 'normal';
+        item.selectedCharm = null;
+
+        //var anchorResult = model.anchorScan(item.selectedCharm)
+        //if (anchorResult.snap) {
+            //item.selectedCharm.anchors.upper.attachedComponent = anchorResult.freshAttachment;
+            //anchorResult.lowerAnchor.attachedComponent = item.selectedCharm;
+
+            //item.selectedCharm.translateChain(anchorResult.params.x, anchorResult.params.y)
+        //}
+    }
+    console.log("Mouseup, selectedCharm: ", item.selectedCharm);
+
+});
+/*
+canvas.addEventListener('mousemove', function(evt) {
+    var mousePos = getMousePos(canvas, evt);
+    if (item.selectedCharm) {
+        var dx = mousePos.x - oldMousePos.x;
+        var dy = mousePos.y - oldMousePos.y;
+
+        item.selectedCharm.translateChain(dx, dy);
+
+        // highlight snappable anchors during drag
+        var anchorResult = model.anchorScan(item.selectedCharm)
+        if (anchorResult.snap) {
+            anchorResult.lowerAnchor.hovered = true;
+            anchorResult.upperAnchor.hovered = true;
+        }
+    }
+    oldMousePos = mousePos;
+}, false)*/
+
 
 module.exports = { main };
 

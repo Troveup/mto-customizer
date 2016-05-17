@@ -134,8 +134,15 @@ MTOItem.prototype.iterateCharms = function(callback) {
 
 MTOItem.prototype.render = function() {
     this.wrappedCanvas.clean();
+
     //this.wrappedCanvas.drawGrid(200, 200, 25);
-    this.drawCharms();
+
+    this.iterateCharms(function(charm) {
+        this.wrappedCanvas.drawRectangle(charm.pos.x, charm.pos.y, charm.angleInRadians, charm.width+2, charm.height+2, 'black');
+        this.wrappedCanvas.drawRectangle(charm.pos.x, charm.pos.y, charm.angleInRadians, charm.width, charm.height, 'white');
+        this.wrappedCanvas.drawImage(charm.pos.x, charm.pos.y, charm.angleInRadians, charm.width, charm.height, charm.img);
+    }.bind(this));
+
     this.drawGround();
 };
 
@@ -144,7 +151,7 @@ MTOItem.prototype.drawGround = function() {
     this.wrappedCanvas.drawRectangle(g.x, g.y, g.angle, oblongWidth, oblongHeight, 'black');
 };
 
-MTOItem.prototype.stepPhysics = function() {
+MTOItem.prototype.stepPhysics = function(dt) {
     this.physics.tick(dt);
 
     // sync physics body data with containg Charm object
@@ -155,15 +162,6 @@ MTOItem.prototype.stepPhysics = function() {
         charm.angleInRadians = physData.angle;
     }.bind(this));
 };
-
-MTOItem.prototype.drawCharms = function() {
-    this.iterateCharms(function(charm) {
-        this.wrappedCanvas.drawRectangle(charm.pos.x, charm.pos.y, charm.angleInRadians, charm.width+2, charm.height+2, 'black');
-        this.wrappedCanvas.drawRectangle(charm.pos.x, charm.pos.y, charm.angleInRadians, charm.width, charm.height, 'white');
-        this.wrappedCanvas.drawImage(charm.pos.x, charm.pos.y, charm.angleInRadians, charm.width, charm.height, charm.img);
-    }.bind(this));
-};
-
 
 // ===========================
 
