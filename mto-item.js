@@ -142,9 +142,8 @@ MTOItem.prototype.render = function() {
     //this.wrappedCanvas.drawGrid(200, 200, 25);
 
     this.iterateCharms(function(charm) {
-        this.wrappedCanvas.drawRectangle(charm.pos.x, charm.pos.y, charm.angleInRadians, charm.width+2, charm.height+2, 'black');
-        this.wrappedCanvas.drawRectangle(charm.pos.x, charm.pos.y, charm.angleInRadians, charm.width, charm.height, 'white');
         this.wrappedCanvas.drawImage(charm.pos.x, charm.pos.y, charm.angleInRadians, charm.width, charm.height, charm.img);
+        this.wrappedCanvas.strokeRectangle(charm.pos.x, charm.pos.y, charm.angleInRadians, charm.width, charm.height, 'black');
     }.bind(this));
 
     this.drawGround();

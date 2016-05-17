@@ -87,6 +87,7 @@ WrappedCanvas.prototype.drawImage = function(x, y, angleInRadians, width, height
 
 WrappedCanvas.prototype.strokeRectangle = function(x, y, angleInRadians, width, height, style) {
     this.context.save();
+    this.context.lineWidth = 1 / this.scaleFactor;
     this.context.fillStyle = style;
     this.context.translate(x, y);
     this.context.rotate(angleInRadians);

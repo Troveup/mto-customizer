@@ -52,7 +52,7 @@ Charm.prototype.loadAssets = function() {
     });
 }
 
-
+// FIXME: does not take into account rotation!
 Charm.prototype.hitCheck = function(checkPos) {
     var hx = this.width / 2;
     var hy = this.height / 2;

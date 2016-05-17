@@ -92,8 +92,6 @@ canvas.addEventListener('mousedown', function(evt) {
 
     if (item.selectedCharm) {
         console.warn("TODO: implement sortAnchorsBySelectedCharm(), should be two lists");
-        console.warn("TODO: turn off selectedCharm gravity (or make kinematic?)");
-
         var body = item.selectedCharm.body;
         body.SetGravityScale(0);
         body.SetLinearVelocity( Box2D.b2Vec2( 0, 0) );
