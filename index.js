@@ -3,16 +3,30 @@
 var WrappedCanvas = require("./wrapped-canvas.js");
 var MTOItem = require("./mto-item.js");
 
+var roofX = 0;
+var roofY = 29.5;
+var oblongWidth = 60;
+var oblongHeight = 1;
+
 var necklaceSpec = {
     imgURL: "/resources/img/demo-chain.png",
-    position: new THREE.Vector2(30, 5), // in untransformed grid, need to figure out less hacky way for this
-    width: 60,
-    height: 80,
+    position: new THREE.Vector2(roofX, roofY), // in untransformed grid, need to figure out less hacky way for this
+    width: oblongWidth,
+    height: oblongHeight,
     anchors: [
-        { offset: new THREE.Vector2(-5, 0) },
-        { offset: new THREE.Vector2(5, 0) }
+        { offset: new THREE.Vector2(-5, -1) },
+        { offset: new THREE.Vector2(5, -1) }
     ]
 };
+
+    //imgURL: "/resources/img/demo-chain.png",
+    //position: new THREE.Vector2(30, 5), // in untransformed grid, need to figure out less hacky way for this
+    //width: 60,
+    //height: 80,
+    //anchors: [
+        //{ offset: new THREE.Vector2(-5, 0) },
+        //{ offset: new THREE.Vector2(5, 0) }
+    //]
 
 var linkWidth = 112 / 30;
 var linkHeight = 350 / 30;
