@@ -96,7 +96,8 @@ canvas.addEventListener('mousedown', function(evt) {
         if (pa) {
             pa.attachedAnchor.attachedAnchor = null;
             pa.attachedAnchor = null;
-            console.log("TODO: Destroy box2d joint: ", pa.joint);
+            item.physics.world.DestroyJoint(pa.joint);
+            //console.log("TODO: Destroy box2d joint: ", pa.joint);
         }
 
         item.selectedCharm.status = 'selected';
@@ -109,6 +110,7 @@ canvas.addEventListener('mouseup', function(evt) {
         item.selectedCharm.status = 'normal';
         item.selectedCharm = null;
 
+        console.log("TODO: scan anchors and make connection if detected");
         //var anchorResult = model.anchorScan(item.selectedCharm)
         //if (anchorResult.snap) {
             //item.selectedCharm.anchors.upper.attachedComponent = anchorResult.freshAttachment;
@@ -120,24 +122,29 @@ canvas.addEventListener('mouseup', function(evt) {
     console.log("Mouseup, selectedCharm: ", item.selectedCharm);
 
 });
-/*
+
+var oldMousePos;
 canvas.addEventListener('mousemove', function(evt) {
-    var mousePos = getMousePos(canvas, evt);
+    var mousePos = item.wrappedCanvas.getTransformedCoords(evt.clientX, evt.clientY);
+
     if (item.selectedCharm) {
         var dx = mousePos.x - oldMousePos.x;
         var dy = mousePos.y - oldMousePos.y;
 
-        item.selectedCharm.translateChain(dx, dy);
+        //console.log("TODO: translate chain (and children until physics catches up?)");
 
-        // highlight snappable anchors during drag
-        var anchorResult = model.anchorScan(item.selectedCharm)
-        if (anchorResult.snap) {
-            anchorResult.lowerAnchor.hovered = true;
-            anchorResult.upperAnchor.hovered = true;
-        }
+        var oldPhysical = item.physics.summarize(item.selectedCharm.body);
+        item.selectedCharm.translate(oldPhysical, dx, dy);
+
+        console.log("TODO: set status of overlapped anchors accordingly (for highlighting)");
+        //var anchorResult = model.anchorScan(item.selectedCharm)
+        //if (anchorResult.snap) {
+            //anchorResult.lowerAnchor.hovered = true;
+            //anchorResult.upperAnchor.hovered = true;
+        //}
     }
     oldMousePos = mousePos;
-}, false)*/
+}, false);
 
 
 module.exports = { main };

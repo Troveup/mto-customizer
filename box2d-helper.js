@@ -1,6 +1,8 @@
 
 var Box2D = require('box2d');
 
+// realizing this functionality should be a mixin
+
 function Box2DHelper() {
     this.world = null;
     this.bodies = [];

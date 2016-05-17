@@ -1,5 +1,6 @@
 
 var Anchor = require('./anchor.js');
+var Box2D = require('box2d');
 
 function Charm(spec) {
     this.imgURL = spec.imgURL;
@@ -16,6 +17,7 @@ function Charm(spec) {
         this.anchors[anchorSpec.key] = new Anchor(anchorSpec, this);
     }.bind(this));
 
+    this.body = null; // set by containing item
     this.status = 'normal';
 }
 
@@ -25,16 +27,13 @@ function Charm(spec) {
         //y: this.anchors[index].position.y + this.position.y
     //}
 //};
-//Component.prototype.translateChain = function(x, y) {
-    //this.position.x += x;
-    //this.position.y += y;
 
-    //var hangingPiece = this.anchors.lower.attachedComponent;
-    //if (hangingPiece) {
-        //hangingPiece.translateChain(x, y);
-    //}
-//}
+Charm.prototype.translate = function(oldPhys, dx, dy) {
+    var b2Pos = new Box2D.b2Vec2( oldPhys.x + dx, oldPhys.y + dy);
+    this.body.SetTransform( b2Pos, oldPhys.angle );
 
+    // should hanging chains be recursively translated?
+};
 
 Charm.prototype.loadAssets = function() {
     var that = this;
