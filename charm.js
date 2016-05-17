@@ -9,7 +9,9 @@ function Charm(spec) {
     this.height = spec.height;
     this.angleInRadians = spec.rotation || 0;
 
+    // invariant: `parentAnchor` should be cleared if not connecting to a parent charm anchor
     this.parentAnchor = null;
+
     this.anchors = Object.create(null);
     var anchorSpecs = spec.anchors || [];
     anchorSpecs.map(function(anchorSpec) {

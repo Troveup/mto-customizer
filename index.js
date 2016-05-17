@@ -54,10 +54,8 @@ var componentSpecs = [
     }
 ];
 
-
 var item;
 var dt, currTime, lastTime = Date.now();
-
 function loop() {
     requestAnimationFrame(loop);
 
@@ -78,83 +76,9 @@ function main() {
     });
 }
 
-canvas.addEventListener('mousedown', function(evt) {
-    var mousePos = item.wrappedCanvas.getTransformedCoords(evt.clientX, evt.clientY);
-
-    var closestDist = Infinity;
-    item.charmList.map(function(charm) {
-        var result = charm.hitCheck(mousePos);
-        if (result.hit) {
-            if (!item.selectedCharm || result.dist < closestDist) {
-                item.selectedCharm = charm;
-                closestDist = result.dist;
-            }
-        }
-    });
-
-    if (item.selectedCharm) {
-        console.warn("TODO: implement sortAnchorsBySelectedCharm(), should be two lists");
-        var body = item.selectedCharm.body;
-        body.SetGravityScale(0);
-        body.SetLinearVelocity( Box2D.b2Vec2( 0, 0) );
-        body.SetAngularVelocity( 0 );
-
-        // `parentAnchor` should be cleared if not connecting to a parent charm anchor
-        var pa = item.selectedCharm.parentAnchor;
-        if (pa) {
-            pa.attachedAnchor.attachedAnchor = null;
-            pa.attachedAnchor = null;
-            item.physics.world.DestroyJoint(pa.joint);
-            //console.log("TODO: Destroy box2d joint: ", pa.joint);
-        }
-
-        item.selectedCharm.status = 'selected';
-    }
-    console.log("Mousedown, selectedCharm: ", item.selectedCharm);
-});
-
-canvas.addEventListener('mouseup', function(evt) {
-    if (item.selectedCharm) {
-        item.selectedCharm.status = 'normal';
-        item.selectedCharm.body.SetGravityScale(1);
-        item.selectedCharm = null;
-
-        console.log("TODO: scan anchors and make connection if detected");
-        //var anchorResult = model.anchorScan(item.selectedCharm)
-        //if (anchorResult.snap) {
-            //item.selectedCharm.anchors.upper.attachedComponent = anchorResult.freshAttachment;
-            //anchorResult.lowerAnchor.attachedComponent = item.selectedCharm;
-
-            //item.selectedCharm.translateChain(anchorResult.params.x, anchorResult.params.y)
-        //}
-    }
-    console.log("Mouseup, selectedCharm: ", item.selectedCharm);
-
-});
-
-var oldMousePos;
-canvas.addEventListener('mousemove', function(evt) {
-    var mousePos = item.wrappedCanvas.getTransformedCoords(evt.clientX, evt.clientY);
-
-    if (item.selectedCharm) {
-        var dx = mousePos.x - oldMousePos.x;
-        var dy = mousePos.y - oldMousePos.y;
-
-        //console.log("TODO: translate chain (and children until physics catches up?)");
-
-        var oldPhysical = item.physics.summarize(item.selectedCharm.body);
-        item.selectedCharm.translate(oldPhysical, dx, dy);
-
-        console.log("TODO: set status of overlapped anchors accordingly (for highlighting)");
-        //var anchorResult = model.anchorScan(item.selectedCharm)
-        //if (anchorResult.snap) {
-            //anchorResult.lowerAnchor.hovered = true;
-            //anchorResult.upperAnchor.hovered = true;
-        //}
-    }
-    oldMousePos = mousePos;
-}, false);
-
+canvas.addEventListener('mousedown', item.handleMousedown.bind(item));
+canvas.addEventListener('mouseup', item.handleMouseup.bind(item));
+canvas.addEventListener('mousemove', item.handleMousemove.bind(item), false);
 
 module.exports = { main };
 

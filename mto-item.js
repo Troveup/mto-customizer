@@ -72,66 +72,6 @@ MTOItem.prototype.addCharmsToSim = function() {
     }.bind(this));
 };
 
-/*MTOItem.prototype.testDangle = function() {
-
-    this.roofBody = this.physics.createBox(roofX, roofY, 0, oblongWidth, oblongHeight, 'static');
-    this.groundBody = this.physics.createBox(groundX, groundY, 0, oblongWidth, oblongHeight, 'static');
-
-    this.testLinkCharms = [];
-
-    var anchorOffsetDist = 46;
-    var linkWidth = 112 / 3;
-    var linkHeight = 350 / 3;
-
-    var that = this;
-    function createAndAttachLink(lastBody, lastAnchorOffset) {
-
-        // new link center = lastBody pos + lastAnchorOffset + anchorOffsetDist
-        var lastPos = lastBody.GetPosition();
-        var newCenter = {
-            x: lastPos.get_x() + lastAnchorOffset.get_x(),
-            y: lastPos.get_y() + lastAnchorOffset.get_y() - anchorOffsetDist
-        };
-        //console.log( "Calculated new center: (%s, %s)", newCenter.x, newCenter.y);
-
-        var newCharm = that.spawnCharm(newCenter.x, newCenter.y, anchorOffsetDist);
-        var newLinkBody = newCharm.body; // that.physics.createBox(newCenter.x, newCenter.y, 0, linkWidth, linkHeight, 'dynamic');
-
-        //that.logVec("Newly created link position", newCharm.body.GetPosition());
-
-        // add revolute joint attaching last body using parameters, and definition of new body
-        var joint_def = new Box2D.b2RevoluteJointDef();
-		joint_def.set_bodyA( lastBody );
-		joint_def.set_localAnchorA( lastAnchorOffset );
-		joint_def.set_bodyB( newLinkBody );
-		joint_def.set_localAnchorB( new Box2D.b2Vec2(0, anchorOffsetDist) );
-
-        that.physics.world.CreateJoint(joint_def);
-
-        var newAnchorOffset = new Box2D.b2Vec2(0, -anchorOffsetDist);
-        return { newCharm, newLinkBody, newAnchorOffset };
-    }
-
-    var lastBody = this.roofBody;
-    var lastAnchorOffset = new Box2D.b2Vec2( 0, 0 );
-
-    var NUM_LINKS = 3;
-    for (var i = 0; i < NUM_LINKS; i++) {
-        var lastBodyPos = lastBody.GetPosition();
-        //this.logVec("Previous body position", lastBody.GetPosition());
-        //this.logVec("Last anchor offset", lastAnchorOffset);
-
-        var created = createAndAttachLink( lastBody, lastAnchorOffset );
-        lastBody = created.newLinkBody;
-        lastAnchorOffset = created.newAnchorOffset;
-        this.testLinkCharms.push( created.newCharm );
-    }
-};*/
-
-//MTOItem.prototype.logVec = function(label, boxVec) {
-    //console.log("Dumping vec \"%s\": (%s, %s)", label, boxVec.get_x(), boxVec.get_y());
-//}
-
 MTOItem.prototype.iterateCharms = function(callback) {
     return this.charmList.map(callback);
 };
@@ -172,7 +112,12 @@ MTOItem.prototype.stepPhysics = function(dt) {
     }.bind(this));
 };
 
-// ===========================
+MTOItem.prototype.sortAnchorsOnFocus = function(detachedParent) {
+    // for all connected charms
+    var sel = this.selectedCharm;
+    console.warn("TODO: implement sortAnchorsBySelectedCharm(), should be two lists");
+};
+
 
 /*FlatModel.prototype.anchorScan = function(queryComponent) {
     var cutoffRadius = 30;
@@ -216,28 +161,6 @@ MTOItem.prototype.stepPhysics = function(dt) {
     return result;
 }
 
-/*MTOItem.prototype.drawAnchors = function() {
-    var anchorRenderRadius = 3;
-    var posX = this.position.x;
-    var posY = this.position.y;
-
-    var that = this;
-    Object.keys(this.anchors).map(function(anchorKey) {
-        ctx.save();
-
-        var anchor = that.anchors[anchorKey];
-        var x = posX + anchor.offset.x;
-        var y = posY + anchor.offset.y;
-
-        var style = anchor.hovered ? anchorColors['overlap'] : anchor.debugStyle;
-        anchor.hovered = false;
-        
-        // var anchorStyle = anchor.attachedComponent === null ? 'black' : 'green';
-        drawCircle(ctx, x, y, anchorRenderRadius, style);
-
-        ctx.restore();
-    });
-}
 Charm.prototype.compareAnchors = function(comparison) {
     var lenA = this.anchors.length;
     var lenB = comparison.anchors.length;
@@ -269,10 +192,92 @@ Charm.prototype.compareAnchors = function(comparison) {
 MTOItem.prototype.iterateAnchors = function(callback) {
 };
 
-MTOItem.prototype.handleMousedown = function(callback) {
+MTOItem.prototype.getClosestCharmClicked = function(mousePos) {
+    var closestDist = Infinity;
+    var closestCharm = null;
+    this.charmList.map(function(charm) {
+        var result = charm.hitCheck(mousePos);
+        if (result.hit) {
+            if (!closestCharm || result.dist < closestDist) {
+                closestCharm = charm;
+                closestDist = result.dist;
+            }
+        }
+    });
+    return closestCharm;
 };
 
-MTOItem.prototype.handleMousemouve = function(callback) {
+MTOItem.prototype.detachParentCharm = function(selectedCharm) {
+    var pa = selectedCharm.parentAnchor;
+    if (pa) {
+        var parentCharm = pa.attachedAnchor.ownerCharm;
+        pa.attachedAnchor.attachedAnchor = null;
+        pa.attachedAnchor = null;
+        this.physics.world.DestroyJoint(pa.joint);
+        return parentCharm;
+    }
+
+    return null;
+};
+
+MTOItem.prototype.handleMousedown = function(evt) {
+    console.log("event passed back: ", evt);
+    var mousePos = this.wrappedCanvas.getTransformedCoords(evt.clientX, evt.clientY);
+    var selected = this.getClosestCharmClicked(mousePos);
+    if (selected) {
+        this.selectedCharm = selected;
+
+        var parentCharm = this.detachParentCharm(selected);
+        this.sortAnchorsOnFocus(parentCharm);
+
+        var body = this.selectedCharm.body;
+        body.SetGravityScale(0);
+        body.SetLinearVelocity( Box2D.b2Vec2( 0, 0) );
+        body.SetAngularVelocity( 0 );
+
+        this.selectedCharm.status = 'selected';
+    }
+    console.log("Mousedown, selectedCharm: ", this.selectedCharm);
+};
+
+MTOItem.prototype.handleMouseup = function(callback) {
+    if (this.selectedCharm) {
+        this.selectedCharm.status = 'normal';
+        this.selectedCharm.body.SetGravityScale(1);
+        this.selectedCharm = null;
+
+        console.log("TODO: scan anchors and make connection if detected");
+        //var anchorResult = model.anchorScan(this.selectedCharm)
+        //if (anchorResult.snap) {
+            //this.selectedCharm.anchors.upper.attachedComponent = anchorResult.freshAttachment;
+            //anchorResult.lowerAnchor.attachedComponent = this.selectedCharm;
+
+            //this.selectedCharm.translateChain(anchorResult.params.x, anchorResult.params.y)
+        //}
+    }
+    console.log("Mouseup, selectedCharm: ", this.selectedCharm);
+};
+
+var oldMousePos;
+MTOItem.prototype.handleMousemove = function(callback) {
+    var mousePos = this.wrappedCanvas.getTransformedCoords(evt.clientX, evt.clientY);
+
+    if (this.selectedCharm) {
+        var dx = mousePos.x - oldMousePos.x;
+        var dy = mousePos.y - oldMousePos.y;
+
+        var oldPhysical = this.physics.summarize(this.selectedCharm.body);
+        this.selectedCharm.translate(oldPhysical, dx, dy);
+
+        console.log("TODO: set status of overlapped anchors accordingly (for highlighting)");
+        //var anchorResult = model.anchorScan(this.selectedCharm)
+        //if (anchorResult.snap) {
+            //anchorResult.lowerAnchor.hovered = true;
+            //anchorResult.upperAnchor.hovered = true;
+        //}
+    }
+    oldMousePos = mousePos;
 };
 
 module.exports = MTOItem;
+
