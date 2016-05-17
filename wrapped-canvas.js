@@ -68,10 +68,13 @@ WrappedCanvas.prototype.drawGrid = function(xDelta, yDelta, stepSize) {
 }
 
 WrappedCanvas.prototype.drawCircle = function(x, y, radius, style) {
+    this.context.save();
+    
     this.context.fillStyle = style;
     this.context.beginPath();
-    this.context.arc(x, y, radius, 0, 2 * Math.PI, true);
+    this.context.arc(x, y, radius / this.scaleFactor, 0, 2 * Math.PI, true);
     this.context.fill();
+    this.context.restore();
 }
 
 WrappedCanvas.prototype.drawImage = function(x, y, angleInRadians, width, height, img) {

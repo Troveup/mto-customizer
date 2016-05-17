@@ -139,11 +139,13 @@ MTOItem.prototype.iterateCharms = function(callback) {
 MTOItem.prototype.render = function() {
     this.wrappedCanvas.clean();
 
-    //this.wrappedCanvas.drawGrid(200, 200, 25);
-
     this.iterateCharms(function(charm) {
         this.wrappedCanvas.drawImage(charm.pos.x, charm.pos.y, charm.angleInRadians, charm.width, charm.height, charm.img);
-        this.wrappedCanvas.strokeRectangle(charm.pos.x, charm.pos.y, charm.angleInRadians, charm.width, charm.height, 'black');
+        charm.eachAnchor(function(anchor, isParent) {
+            var o = anchor.getTransformedOffset();
+            this.wrappedCanvas.drawCircle(o.x, o.y, 5, 'black');
+        }.bind(this));
+        this.wrappedCanvas.strokeRectangle(charm.pos.x, charm.pos.y, 0, charm.width, charm.height, 'black'); // FIXME: drawing real hitbox
     }.bind(this));
 
     this.drawGround();

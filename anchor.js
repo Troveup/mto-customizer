@@ -8,6 +8,16 @@ function Anchor(spec, owner) {
     this.attachedAnchor = null;
 }
 
+Anchor.prototype.getTransformedOffset = function() {
+    var o = {};
+    var radians = this.ownerCharm.angleInRadians;
+    o.x = this.offset.x * Math.cos(radians) - this.offset.y * Math.sin(radians);
+    o.y = this.offset.x * Math.sin(radians) + this.offset.y * Math.cos(radians);
+    o.x += this.ownerCharm.pos.x;
+    o.y += this.ownerCharm.pos.y;
+    return o;
+}
+
 /*FlatModel.prototype.checkAnchors = function() {
     var len = this.componentList.length;
     var overlap = null;
