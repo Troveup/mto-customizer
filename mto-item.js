@@ -86,17 +86,16 @@ MTOItem.prototype.render = function() {
         this.wrappedCanvas.drawImage(charm.pos.x, charm.pos.y, charm.angleInRadians, charm.width, charm.height, charm.img);
         charm.eachAnchor(function(anchor, isParent) {
             var o = anchor.getTransformedOffset();
-            this.wrappedCanvas.drawCircle(o.x, o.y, 5, 'black');
+            this.wrappedCanvas.drawCircle(o.x, o.y, 10, 'black');
         }.bind(this));
-        this.wrappedCanvas.strokeRectangle(charm.pos.x, charm.pos.y, 0, charm.width, charm.height, 'black'); // FIXME: drawing real hitbox
-        this.wrappedCanvas.strokeRectangle(charm.pos.x, charm.pos.y, charm.angleInRadians, charm.width, charm.height, 'black'); // FIXME: drawing real hitbox
+        this.wrappedCanvas.strokeRectangle(charm.pos.x, charm.pos.y, charm.angleInRadians, charm.width, charm.height, 'black');
     }.bind(this));
 
     var r = this.physics.summarize(this.baseChain.body);
     this.wrappedCanvas.drawRectangle(r.x, r.y, r.angle, oblongWidth, oblongHeight, 'black');
     this.baseChain.eachAnchor(function(anchor, isParent) {
         var o = anchor.getTransformedOffset();
-        this.wrappedCanvas.drawCircle(o.x, o.y, 5, 'black');
+        this.wrappedCanvas.drawCircle(o.x, o.y, 10, 'black');
     }.bind(this));
 
     this.drawGround();
@@ -197,7 +196,7 @@ MTOItem.prototype.findAnchorCollisions = function() {
             var anchorMovable = this.openFocusAnchors[i];
             var anchorStable = this.openRootAnchors[j];
 
-            var result = anchorMovable.checkCollision(anchorStable, 10);
+            var result = anchorMovable.checkCollision(anchorStable, 20);
             if (result.hit) {
                 var physData = this.physics.summarize(anchorMovable.ownerCharm.body);
                 anchorMovable.ownerCharm.translate(physData, result.dx, result.dy);

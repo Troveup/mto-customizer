@@ -47,20 +47,27 @@ Charm.prototype.loadAssets = function() {
     });
 }
 
-// FIXME: does not take into account rotation!
+var outsideVec = new THREE.Vector3(0, 0, 1);
+
 Charm.prototype.hitCheck = function(checkPos) {
     var hx = this.width / 2;
     var hy = this.height / 2;
     var minX = this.pos.x - hx;
     var maxX = this.pos.x + hx;
     var minY = this.pos.y - hy;
-    var maxY = this.pos.y + hy
+    var maxY = this.pos.y + hy;
+
+    // to transform rectangular region with known rotation and width x height to centered
+    // translate by negative position, rotate by negative angle, translate back by position
+    var checkCenterOffset = new THREE.Vector3(checkPos.x - this.pos.x, checkPos.y - this.pos.y, 0);
+    checkCenterOffset.applyAxisAngle( outsideVec, -this.angleInRadians );
+    checkCenterOffset.add( this.pos );
 
     var miss = { hit: false };
-    if (checkPos.x < minX) return miss;
-    if (checkPos.x > maxX) return miss;
-    if (checkPos.y < minY) return miss;
-    if (checkPos.y > maxY) return miss;
+    if (checkCenterOffset.x < minX) return miss;
+    if (checkCenterOffset.x > maxX) return miss;
+    if (checkCenterOffset.y < minY) return miss;
+    if (checkCenterOffset.y > maxY) return miss;
 
     // TODO: use only Box2D vectors
     var center = this.pos.clone();
