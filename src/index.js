@@ -99,5 +99,7 @@ function writeDebugInfo(root) {
     root.appendChild(debugNode);
 }
 
+console.log("index initialized");
+
 module.exports = { main, writeDebugInfo };
 
