@@ -14,8 +14,9 @@ var anchorColors = {
 function WrappedCanvas(canvasID = 'canvas') {
     var cnv = document.getElementById(canvasID);
     if (!cnv) {
-        console.warn("No usable canvas found with id: ", canvasID);
-        // TODO: create a canvas and attach to body
+        cnv = document.createElement('canvas');
+        cnv.id = 'canvas';
+        document.body.appendChild(cnv);
     }
 
     this.canvas = cnv;

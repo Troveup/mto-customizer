@@ -5,6 +5,7 @@ module.exports = {
     target: 'web',
     output: {
         path: path.resolve('build'),
+        publicPath: '/assets/',
         library: 'MTO',
         filename: 'MTO.js'
     },

@@ -9,7 +9,7 @@ var oblongWidth = 60;
 var oblongHeight = 1;
 
 var necklaceSpec = {
-    imgURL: "/resources/img/demo-chain.png",
+    imgURL: "/demo-chain.png",
     position: new THREE.Vector2(roofX, roofY), // in untransformed grid, need to figure out less hacky way for this
     width: oblongWidth,
     height: oblongHeight,
@@ -36,7 +36,7 @@ var anchorOffsetDist = 4.6;
 var DEG_TO_RAD = Math.PI / 180;
 var componentSpecs = [
     {
-        imgURL: "/resources/img/directed-charm-link.png",
+        imgURL: "/directed-charm-link.png",
         position: new THREE.Vector2(-5, 0),
         width: linkWidth,
         height: linkHeight,
@@ -46,7 +46,7 @@ var componentSpecs = [
         ]
     },
     {
-        imgURL: "/resources/img/directed-charm-link.png",
+        imgURL: "/directed-charm-link.png",
         position: new THREE.Vector2(0, 0),
         rotation: 45 * DEG_TO_RAD,
         width: linkWidth,
@@ -57,7 +57,7 @@ var componentSpecs = [
         ]
     },
     {
-        imgURL: "/resources/img/directed-charm-link.png",
+        imgURL: "/directed-charm-link.png",
         position: new THREE.Vector2(5, 0),
         width: linkWidth,
         height: linkHeight,
