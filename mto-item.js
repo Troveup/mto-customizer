@@ -31,7 +31,7 @@ MTOItem.prototype.spawnCharm = function(x, y, anchorOffsetDist) {
     var linkWidth = 112 / 3;
     var linkHeight = 350 / 3;
     var proceduralSpec = {
-        imgURL: "/resources/img/charm-link.png",
+        imgURL: "/resources/img/directed-charm-link.png",
         position: new THREE.Vector2(x, y),
         rotation: 0,
         width: linkWidth,
@@ -146,6 +146,7 @@ MTOItem.prototype.sortAnchorsOnFocus = function() {
     this.openRootAnchors = [];
     this.openFocusAnchors = [];
 
+    console.warn("Sorting anchors not properly iterating through linked anchors");
     this.forConnectedCharms(this.baseChain, function(charm) {
         console.log(" base charm: ", charm);
         charm.eachAnchor(function(anchor) {
@@ -261,6 +262,8 @@ MTOItem.prototype.handleMouseup = function(evt) {
             var physData = this.physics.summarize(ownerCharm.body);
             closest.selectionAnchor.ownerCharm.translate(physData, closest.dx, closest.dy);
             this.attachAnchors(closest.selectionAnchor, closest.hangingAnchor);
+            this.openRootAnchors = [];
+            this.openFocusAnchors = [];
         }
     }
 };

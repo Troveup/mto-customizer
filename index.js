@@ -36,7 +36,7 @@ var anchorOffsetDist = 4.6;
 var DEG_TO_RAD = Math.PI / 180;
 var componentSpecs = [
     {
-        imgURL: "/resources/img/charm-link.png",
+        imgURL: "/resources/img/directed-charm-link.png",
         position: new THREE.Vector2(-5, 0),
         width: linkWidth,
         height: linkHeight,
@@ -46,7 +46,7 @@ var componentSpecs = [
         ]
     },
     {
-        imgURL: "/resources/img/charm-link.png",
+        imgURL: "/resources/img/directed-charm-link.png",
         position: new THREE.Vector2(0, 0),
         rotation: 45 * DEG_TO_RAD,
         width: linkWidth,
@@ -57,7 +57,7 @@ var componentSpecs = [
         ]
     },
     {
-        imgURL: "/resources/img/charm-link.png",
+        imgURL: "/resources/img/directed-charm-link.png",
         position: new THREE.Vector2(5, 0),
         width: linkWidth,
         height: linkHeight,
@@ -93,6 +93,11 @@ function main() {
     });
 }
 
+function writeDebugInfo(root) {
+    var debugNode = document.createElement('div');
+    debugNode.className = 'debugNode';
+    root.appendChild(debugNode);
+}
 
-module.exports = { main };
+module.exports = { main, writeDebugInfo };
 
