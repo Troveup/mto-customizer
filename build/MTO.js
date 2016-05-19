@@ -35,7 +35,7 @@ var MTO =
 /******/ 	__webpack_require__.c = installedModules;
 
 /******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "";
+/******/ 	__webpack_require__.p = "/assets/";
 
 /******/ 	// Load entry module and return exports
 /******/ 	return __webpack_require__(0);
@@ -56,7 +56,7 @@ var MTO =
 	var oblongHeight = 1;
 
 	var necklaceSpec = {
-	    imgURL: "/resources/img/demo-chain.png",
+	    imgURL: "/demo-chain.png",
 	    position: new THREE.Vector2(roofX, roofY), // in untransformed grid, need to figure out less hacky way for this
 	    width: oblongWidth,
 	    height: oblongHeight,
@@ -83,7 +83,7 @@ var MTO =
 	var DEG_TO_RAD = Math.PI / 180;
 	var componentSpecs = [
 	    {
-	        imgURL: "/resources/img/directed-charm-link.png",
+	        imgURL: "/directed-charm-link.png",
 	        position: new THREE.Vector2(-5, 0),
 	        width: linkWidth,
 	        height: linkHeight,
@@ -93,7 +93,7 @@ var MTO =
 	        ]
 	    },
 	    {
-	        imgURL: "/resources/img/directed-charm-link.png",
+	        imgURL: "/directed-charm-link.png",
 	        position: new THREE.Vector2(0, 0),
 	        rotation: 45 * DEG_TO_RAD,
 	        width: linkWidth,
@@ -104,7 +104,7 @@ var MTO =
 	        ]
 	    },
 	    {
-	        imgURL: "/resources/img/directed-charm-link.png",
+	        imgURL: "/directed-charm-link.png",
 	        position: new THREE.Vector2(5, 0),
 	        width: linkWidth,
 	        height: linkHeight,
@@ -172,8 +172,9 @@ var MTO =
 	function WrappedCanvas(canvasID = 'canvas') {
 	    var cnv = document.getElementById(canvasID);
 	    if (!cnv) {
-	        console.warn("No usable canvas found with id: ", canvasID);
-	        // TODO: create a canvas and attach to body
+	        cnv = document.createElement('canvas');
+	        cnv.id = 'canvas';
+	        document.body.appendChild(cnv);
 	    }
 
 	    this.canvas = cnv;
