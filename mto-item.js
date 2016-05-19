@@ -79,23 +79,26 @@ MTOItem.prototype.iterateCharms = function(callback) {
     return this.charmList.map(callback);
 };
 
+var anchorRadius = 2;
 MTOItem.prototype.render = function() {
     this.wrappedCanvas.clean();
 
     this.iterateCharms(function(charm) {
         this.wrappedCanvas.drawImage(charm.pos.x, charm.pos.y, charm.angleInRadians, charm.width, charm.height, charm.img);
+        if (charm == this.selectedCharm) {
+            this.wrappedCanvas.strokeRectangle(charm.pos.x, charm.pos.y, charm.angleInRadians, charm.width, charm.height, 'black');
+        }
         charm.eachAnchor(function(anchor, isParent) {
             var o = anchor.getTransformedOffset();
-            this.wrappedCanvas.drawCircle(o.x, o.y, 10, 'black');
+            this.wrappedCanvas.drawCircle(o.x, o.y, anchorRadius, 'black');
         }.bind(this));
-        this.wrappedCanvas.strokeRectangle(charm.pos.x, charm.pos.y, charm.angleInRadians, charm.width, charm.height, 'black');
     }.bind(this));
 
     var r = this.physics.summarize(this.baseChain.body);
     this.wrappedCanvas.drawRectangle(r.x, r.y, r.angle, oblongWidth, oblongHeight, 'black');
     this.baseChain.eachAnchor(function(anchor, isParent) {
         var o = anchor.getTransformedOffset();
-        this.wrappedCanvas.drawCircle(o.x, o.y, 10, 'black');
+        this.wrappedCanvas.drawCircle(o.x, o.y, anchorRadius, 'black');
     }.bind(this));
 
     this.drawGround();
@@ -188,37 +191,27 @@ MTOItem.prototype.detachParentCharm = function(selectedCharm) {
 };
 
 console.warn("TODO: fix buggy logic for detecting anchor collisions");
-MTOItem.prototype.findAnchorCollisions = function() {
+MTOItem.prototype.findAnchorCollisions = function(overlapRadius = 5) {
+    var overlappingAnchorPairs = [];
 
-    var bestResult = null;
     for (var i = 0; i < this.openFocusAnchors.length; i++) {
         for (var j = 0; j < this.openRootAnchors.length; j++) {
-            var anchorMovable = this.openFocusAnchors[i];
-            var anchorStable = this.openRootAnchors[j];
+            var selectionAnchor = this.openFocusAnchors[i];
+            var hangingAnchor = this.openRootAnchors[j];
 
-            var result = anchorMovable.checkCollision(anchorStable, 20);
+            var result = selectionAnchor.checkCollision(hangingAnchor, overlapRadius);
             if (result.hit) {
-                var physData = this.physics.summarize(anchorMovable.ownerCharm.body);
-                anchorMovable.ownerCharm.translate(physData, result.dx, result.dy);
-
-                // FIXME: check all anchors for closest or short circuit? probably former
-                this.attachAnchors(anchorMovable, anchorStable);
-                return;
+                result.selectionAnchor = selectionAnchor;
+                result.hangingAnchor = hangingAnchor;
+                overlappingAnchorPairs.push( result );
             }
-
-            //if (result.hit && (!bestResult || result.separation < bestResult.separation)) {
-                //bestResult = result;
-            //}
         }
     }
-
-    //if (bestResult) {
-        //var physData = this.physics.summarize(anchorMovable.ownerCharm.body);
-        //anchorMovable.ownerCharm.translate(physData, result.dx, result.dy);
-    //}
+    return overlappingAnchorPairs;
 };
 
 MTOItem.prototype.attachAnchors = function(anchorA, anchorB) {
+    console.log("TODO: connect anchors and add joint to physics");
     var bodyA = anchorA.ownerCharm.body;
     var bodyB = anchorB.ownerCharm.body;
 
@@ -253,16 +246,22 @@ MTOItem.prototype.handleMouseup = function(evt) {
         this.selectedCharm.body.SetGravityScale(1);
         this.selectedCharm = null;
 
-        var collisions = this.findAnchorCollisions();
+        var collisions = this.findAnchorCollisions(2*anchorRadius);
+        var closest = null;
+        var closestDist = Infinity;
+        if (collisions.length > 0) {
+            collisions.map(function(hitReport) {
+                if (!closest || hitReport.separation < closestDist) {
+                    closest = hitReport;
+                    closestDist = hitReport.separation;
+                }
+            });
 
-        console.log("TODO: scan anchors and make connection if detected");
-        //var anchorResult = model.anchorScan(this.selectedCharm)
-        //if (anchorResult.snap) {
-            //this.selectedCharm.anchors.upper.attachedComponent = anchorResult.freshAttachment;
-            //anchorResult.lowerAnchor.attachedComponent = this.selectedCharm;
-
-            //this.selectedCharm.translateChain(anchorResult.params.x, anchorResult.params.y)
-        //}
+            var ownerCharm = closest.selectionAnchor.ownerCharm;
+            var physData = this.physics.summarize(ownerCharm.body);
+            closest.selectionAnchor.ownerCharm.translate(physData, closest.dx, closest.dy);
+            this.attachAnchors(closest.selectionAnchor, closest.hangingAnchor);
+        }
     }
 };
 
@@ -277,8 +276,6 @@ MTOItem.prototype.handleMousemove = function(evt) {
 
         var oldPhysical = this.physics.summarize(this.selectedCharm.body);
         this.selectedCharm.translate(oldPhysical, dx, dy);
-
-        //this.findAnchorCollisions();
     }
     oldMousePos = mousePos;
 };

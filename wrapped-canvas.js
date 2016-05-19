@@ -72,7 +72,7 @@ WrappedCanvas.prototype.drawCircle = function(x, y, radius, style) {
     
     this.context.fillStyle = style;
     this.context.beginPath();
-    this.context.arc(x, y, radius / this.scaleFactor, 0, 2 * Math.PI, true);
+    this.context.arc(x, y, radius, 0, 2 * Math.PI, true);
     this.context.fill();
     this.context.restore();
 }
