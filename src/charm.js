@@ -23,18 +23,22 @@ function Charm(spec) {
     this.status = 'normal';
 }
 
+Charm.prototype.toString = function() {
+    return "Charm at [ "+ this.pos.x +", "+ this.pos.y +" ]";
+}
+
 Charm.prototype.halt = function() {
     console.log("halting!");
     this.body.SetGravityScale(0);
     this.body.SetLinearVelocity( Box2D.b2Vec2( 0, 0) );
     this.body.SetAngularVelocity( 0 );
-}
+};
 
 Charm.prototype.resume = function() {
     console.log("resuming!");
     //this.selectedCharm.status = 'normal';
     this.body.SetGravityScale(1);
-}
+};
 
 Charm.prototype.translate = function(oldPhys, dx, dy) {
     var b2Pos = new Box2D.b2Vec2( oldPhys.x + dx, oldPhys.y + dy);
@@ -58,10 +62,9 @@ Charm.prototype.loadAssets = function() {
         img.src = that.imgURL
         that.img = img;
     });
-}
+};
 
-var outsideVec = new THREE.Vector3(0, 0, 1);
-
+var upFromScreen = new THREE.Vector3(0, 0, 1);
 Charm.prototype.hitCheck = function(checkPos) {
     var hx = this.width / 2;
     var hy = this.height / 2;
@@ -72,8 +75,8 @@ Charm.prototype.hitCheck = function(checkPos) {
 
     // to transform rectangular region with known rotation and width x height to centered
     // translate by negative position, rotate by negative angle, translate back by position
-    var checkCenterOffset = new THREE.Vector3(checkPos.x - this.pos.x, checkPos.y - this.pos.y, 0);
-    checkCenterOffset.applyAxisAngle( outsideVec, -this.angleInRadians );
+    var checkCenterOffset = new THREE.Vector3(checkPos.x - this.pos.x, checkPos.y - this.pos.y, 0); // apparently 2D vecs don't need to rotate
+    checkCenterOffset.applyAxisAngle( upFromScreen, -this.angleInRadians );
     checkCenterOffset.add( this.pos );
 
     var miss = { hit: false };
@@ -90,7 +93,7 @@ Charm.prototype.hitCheck = function(checkPos) {
         hit: true,
         dist: displacement.length()
     };
-}
+};
 
 // pass callback of form
 // fn(anchor, isParent)
@@ -99,7 +102,7 @@ Charm.prototype.eachAnchor = function(fn) {
         var anchor = this.anchors[anchorKey];
         fn(anchor, anchor == this.parentAnchor);
     }.bind(this));
-}
+};
 
 // TODO: es6 changes
 Charm.prototype.compareAnchors = function(comparison) {
@@ -127,8 +130,7 @@ Charm.prototype.compareAnchors = function(comparison) {
     return {
         hit: false
     };
-}
-
+};
 
 // these functions have to do with non-physical means of specifying change in location
 Charm.prototype.moveTo = function(x, y) {

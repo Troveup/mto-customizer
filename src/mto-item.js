@@ -135,6 +135,19 @@ MTOItem.prototype.forConnectedCharms = function(seedCharm, fn) {
     }
 };
 
+MTOItem.prototype.debugCachedAnchors = function() {
+    var rootStrings = this.openRootAnchors.map(function(anchor) {
+        return anchor.toString();
+    });
+    var focusStrings = this.openFocusAnchors.map(function(anchor) {
+        return anchor.toString();
+    });
+
+    var debugStrings = ["Root anchors: "].concat(rootStrings, ["Focus anchors:"], focusStrings);
+    console.log("Debug strings", debugStrings);
+    return debugStrings.join("<br>");
+};
+
 // use base chain as starting point for valid anchors to attach to, will be used to
 // check against any open anchors on the focused charm for connections
 MTOItem.prototype.cacheLiveAnchors = function() {

@@ -7,6 +7,10 @@ function Anchor(spec, owner) {
     this.attachedAnchor = null;
 }
 
+Anchor.prototype.toString = function() {
+    return "Anchor offset: [ "+ this.offset.x +", "+ this.offset.y +" ]";
+}
+
 Anchor.prototype.getTransformedOffset = function() {
     var o = {};
     var radians = this.ownerCharm.angleInRadians;

@@ -93,11 +93,16 @@ function main() {
     });
 }
 
-function writeDebugInfo(root) {
+function writeDebugInfo(root, secondsDelay) {
     var debugNode = document.createElement('div');
     debugNode.className = 'debugNode';
-    debugNode.innerHTML = 'this should be debug data';
-    root.appendChild(debugNode);
+
+    setTimeout(function() {
+        var data = item.debugCachedAnchors();
+        debugNode.innerHTML = data;
+
+        root.appendChild(debugNode);
+    }, secondsDelay*1000);
 }
 
 module.exports = { main, writeDebugInfo };
