@@ -3,15 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <title>Document</title>
+  <style>
+    #canvas {
+        border: 1px solid black;
+    }
+  </style>
 </head>
 <body>
-  <canvas width="600" height="600" id="canvas">
+    <canvas width="600" height="600" id="canvas"></canvas>
+    <button id="debugButton"> Show Debug Data</button>
+    <div id="logMessages"></div>
 
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r73/three.js"></script>
-  <script type="text/javascript" src="/box2d_v2.3.1_min.js"></script>
-  <script type="text/javascript" src="/assets/MTO.js"></script>
-  <script type="text/javascript">
-    MTO.main();
-  </script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r73/three.js"></script>
+    <script type="text/javascript" src="/box2d_v2.3.1_min.js"></script>
+    <script type="text/javascript" src="/assets/MTO.js"></script>
+    <script type="text/javascript">
+        MTO.main();
+        var button = document.getElementById("debugButton");
+        button.addEventListener('click', function(evt) {
+            MTO.writeDebugInfo(document.getElementById("logMessages"));
+        });
+    </script>
 </body>
 </html>

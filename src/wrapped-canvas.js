@@ -60,12 +60,15 @@ WrappedCanvas.prototype.drawLine = function(x1, y1, x2, y2) {
 }
 
 WrappedCanvas.prototype.drawGrid = function(xDelta, yDelta, stepSize) {
+    this.context.save();
+    this.context.lineWidth = 1 / this.scaleFactor;
     for (var x = 0; x < yDelta; x += stepSize) {
         this.drawLine( x, 0, x, yDelta );
     }
     for (var y = 0; y < yDelta; y += stepSize) {
         this.drawLine( 0, y, xDelta, y );
     }
+    this.context.restore();
 }
 
 WrappedCanvas.prototype.drawCircle = function(x, y, radius, style) {

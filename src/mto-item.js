@@ -17,14 +17,9 @@ function MTOItem(canvasID, baseSpec, charmSpecList) {
 
     this.selectedCharm = null;
     this.groundBody = null;
-    //this.roofBody = null;
 
     this.physics = new Box2DHelper();
     this.physics.init();
-
-    // potential ways to store non-linked charms
-    //this.looseRoots
-    //this.chainList
 }
 
 MTOItem.prototype.spawnCharm = function(x, y, anchorOffsetDist) {
@@ -43,7 +38,7 @@ MTOItem.prototype.spawnCharm = function(x, y, anchorOffsetDist) {
     var c = new Charm(proceduralSpec);
     c.body = this.physics.createBox(c.pos.x, c.pos.y, c.angleInRadians, c.width, c.height, 'dynamic');
     return c;
-}
+};
 
 
 var groundX = 0;
@@ -82,6 +77,8 @@ MTOItem.prototype.iterateCharms = function(callback) {
 var anchorRadius = 2;
 MTOItem.prototype.render = function() {
     this.wrappedCanvas.clean();
+
+    this.wrappedCanvas.drawGrid(28, 28, 5);
 
     this.iterateCharms(function(charm) {
         this.wrappedCanvas.drawImage(charm.pos.x, charm.pos.y, charm.angleInRadians, charm.width, charm.height, charm.img);
@@ -141,7 +138,7 @@ MTOItem.prototype.forConnectedCharms = function(seedCharm, fn) {
 
 // use base chain as starting point for valid anchors to attach to, will be used to
 // check against any open anchors on the focused charm for connections
-MTOItem.prototype.sortAnchorsOnFocus = function() {
+MTOItem.prototype.cacheLiveAnchors = function() {
     var that = this;
     this.openRootAnchors = [];
     this.openFocusAnchors = [];
@@ -230,7 +227,7 @@ MTOItem.prototype.handleMousedown = function(evt) {
         this.selectedCharm = selected;
 
         this.detachParentCharm(selected);
-        this.sortAnchorsOnFocus();
+        this.cacheLiveAnchors();
 
         var body = this.selectedCharm.body;
         body.SetGravityScale(0);

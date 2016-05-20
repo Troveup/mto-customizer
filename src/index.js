@@ -96,10 +96,9 @@ function main() {
 function writeDebugInfo(root) {
     var debugNode = document.createElement('div');
     debugNode.className = 'debugNode';
+    debugNode.innerHTML = 'this should be debug data';
     root.appendChild(debugNode);
 }
-
-console.log("index initialized");
 
 module.exports = { main, writeDebugInfo };
 
