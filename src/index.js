@@ -19,15 +19,6 @@ var necklaceSpec = {
     ]
 };
 
-    //imgURL: "/resources/img/demo-chain.png",
-    //position: new THREE.Vector2(30, 5), // in untransformed grid, need to figure out less hacky way for this
-    //width: 60,
-    //height: 80,
-    //anchors: [
-        //{ offset: new THREE.Vector2(-5, 0) },
-        //{ offset: new THREE.Vector2(5, 0) }
-    //]
-
 var linkWidth = 112 / 30;
 var linkHeight = 350 / 30;
 
@@ -59,6 +50,16 @@ var componentSpecs = [
     {
         imgURL: "/directed-charm-link.png",
         position: new THREE.Vector2(5, 0),
+        width: linkWidth,
+        height: linkHeight,
+        anchors: [
+            { offset: new THREE.Vector2(0, anchorOffsetDist) },
+            { offset: new THREE.Vector2(0, -anchorOffsetDist) }
+        ]
+    },
+    {
+        imgURL: "/directed-charm-link.png",
+        position: new THREE.Vector2(7, 0),
         width: linkWidth,
         height: linkHeight,
         anchors: [

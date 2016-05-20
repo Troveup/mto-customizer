@@ -2,7 +2,15 @@
 var Anchor = require('./anchor.js');
 var Box2D = require('box2d');
 
+function createGUID() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+        return v.toString(16);
+    });
+}
+
 function Charm(spec) {
+    this.key = createGUID(); // think of better method...
     this.imgURL = spec.imgURL;
     this.pos = spec.position;
     this.width = spec.width;
@@ -28,14 +36,12 @@ Charm.prototype.toString = function() {
 }
 
 Charm.prototype.halt = function() {
-    console.log("halting!");
     this.body.SetGravityScale(0);
     this.body.SetLinearVelocity( Box2D.b2Vec2( 0, 0) );
     this.body.SetAngularVelocity( 0 );
 };
 
 Charm.prototype.resume = function() {
-    console.log("resuming!");
     //this.selectedCharm.status = 'normal';
     this.body.SetGravityScale(1);
 };

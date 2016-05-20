@@ -10,7 +10,7 @@ function Anchor(spec, owner) {
 Anchor.prototype.toString = function() {
     var off = this.getTransformedOffset();
     return "Anchor offset: [ "+ off.x +", "+ off.y +" ]";
-}
+};
 
 Anchor.prototype.getTransformedOffset = function() {
     var o = {};
@@ -20,7 +20,7 @@ Anchor.prototype.getTransformedOffset = function() {
     o.x += this.ownerCharm.pos.x;
     o.y += this.ownerCharm.pos.y;
     return o;
-}
+};
 
 // calculate distance between anchors in global space, if lower than a cutoff
 Anchor.prototype.checkCollision = function(otherAnchor, overlapDiameter = 10) {

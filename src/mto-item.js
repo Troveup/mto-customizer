@@ -115,9 +115,9 @@ MTOItem.prototype.stepPhysics = function(dt) {
 };
 
 MTOItem.prototype.forConnectedCharms = function(seedCharm, fn) {
-    console.log( "=== Executing forConnectedCharms..." );
     var visited = Object.create(null);
     var checkQueue = [ seedCharm ];
+    visited[seedCharm.key] = true;
     for (var i = 0; i < checkQueue.length; i++) {
         fn(checkQueue[i]);
         checkQueue[i].eachAnchor(function(anchor, isParent) {
@@ -162,7 +162,6 @@ MTOItem.prototype.cacheLiveAnchors = function() {
 
     console.warn("Sorting anchors not properly iterating through linked anchors");
     this.forConnectedCharms(this.baseChain, function(charm) {
-        console.log(" base charm: ", charm);
         charm.eachAnchor(function(anchor) {
             if (!anchor.attachedAnchor) {
                 that.openRootAnchors.push(anchor);
@@ -195,6 +194,7 @@ MTOItem.prototype.getClosestCharmClicked = function(mousePos) {
 MTOItem.prototype.detachParentCharm = function(selectedCharm) {
     var pa = selectedCharm.parentAnchor;
     if (pa) {
+        console.log("detaching parent");
         var parentCharm = pa.attachedAnchor.ownerCharm;
         pa.attachedAnchor.attachedAnchor = null;
         pa.attachedAnchor = null;
