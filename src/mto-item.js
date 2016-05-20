@@ -21,30 +21,6 @@ function MTOItem(canvasID, baseSpec, charmSpecList) {
     this.physics.init();
 }
 
-MTOItem.prototype.spawnCharm = function(x, y, anchorOffsetDist) {
-    var linkWidth = 112 / 3;
-    var linkHeight = 350 / 3;
-    var proceduralSpec = {
-        imgURL: "/resources/img/directed-charm-link.png",
-        position: new THREE.Vector2(x, y),
-        rotation: 0,
-        width: linkWidth,
-        height: linkHeight,
-        upperAnchor: new THREE.Vector2(0, anchorOffsetDist),
-        lowerAnchor: new THREE.Vector2(0, -anchorOffsetDist)
-    };
-
-    var c = new Charm(proceduralSpec);
-    c.body = this.physics.createBox(c.pos.x, c.pos.y, c.angleInRadians, c.width, c.height, 'dynamic');
-    return c;
-};
-
-
-var groundX = 0;
-var groundY = -29.5;
-var oblongWidth = 60;
-var oblongHeight = 1;
-
 MTOItem.prototype.loadAssets = function() {
     var loadingPromises = this.charmList.map(function(charm){
         return charm.loadAssets();
@@ -54,15 +30,20 @@ MTOItem.prototype.loadAssets = function() {
     return Promise.all(loadingPromises);
 };
 
+var groundX = 0;
+var groundY = -29.5;
+var oblongWidth = 60;
+var oblongHeight = 1;
+
 MTOItem.prototype.addCharmsToSim = function() {
     // this is a debug line, should eventually remove
     this.groundBody = this.physics.createBox(groundX, groundY, 0, oblongWidth, oblongHeight, 'static');
-    //this.baseChain.body = this.physics.createBox(roofX, roofY, 0, oblongWidth, oblongHeight, 'static');
     var b = this.baseChain;
     b.body = this.physics.createBox( b.pos.x, b.pos.y, b.angleInRadians, b.width, b.height, 'static' );
 
     this.charmList.map(function(c){
         c.body = this.physics.createBox(c.pos.x, c.pos.y, c.angleInRadians, c.width, c.height, 'dynamic');
+        c.body.SetLinearDamping(0.3);
     }.bind(this));
 };
 
