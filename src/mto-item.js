@@ -2,7 +2,6 @@
 var WrappedCanvas = require("./wrapped-canvas.js");
 var Charm = require("./charm.js");
 var Box2DHelper = require("./box2d-helper.js");
-var Box2D = require("box2d");
 
 function MTOItem(canvasID, baseSpec, charmSpecList) {
     this.baseChain = new Charm(baseSpec);
@@ -220,6 +219,15 @@ MTOItem.prototype.attachAnchors = function(anchorA, anchorB) {
     anchorB.attachedAnchor = anchorA;
 };
 
+// mousedown
+    // determine clicked charm, quit if none
+    // detach clicked charm
+    // immobilize clicked charm
+    // cache relevant anchor sets
+    // set item.grabbed to clicked charm
+// mouseup
+    //
+
 MTOItem.prototype.handleMousedown = function(evt) {
     var mousePos = this.wrappedCanvas.getTransformedCoords(evt.clientX, evt.clientY);
     var selected = this.getClosestCharmClicked(mousePos);
@@ -228,11 +236,7 @@ MTOItem.prototype.handleMousedown = function(evt) {
 
         this.detachParentCharm(selected);
         this.cacheLiveAnchors();
-
-        var body = this.selectedCharm.body;
-        body.SetGravityScale(0);
-        body.SetLinearVelocity( Box2D.b2Vec2( 0, 0) );
-        body.SetAngularVelocity( 0 );
+        this.selectedCharm.halt();
 
         this.selectedCharm.status = 'selected';
     }
@@ -240,8 +244,7 @@ MTOItem.prototype.handleMousedown = function(evt) {
 
 MTOItem.prototype.handleMouseup = function(evt) {
     if (this.selectedCharm) {
-        this.selectedCharm.status = 'normal';
-        this.selectedCharm.body.SetGravityScale(1);
+        this.selectedCharm.resume();
         this.selectedCharm = null;
 
         var collisions = this.findAnchorCollisions(2*anchorRadius);

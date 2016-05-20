@@ -16,5 +16,8 @@
     "type": "git",
     "url": "https://bitbucket.org/troveprint/mto"
   },
-  "author": ""
+  "author": "",
+  "devDependencies": {
+    "webpack-dev-server": "^1.14.1"
+  }
 }

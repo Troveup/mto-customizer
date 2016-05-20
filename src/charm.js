@@ -23,6 +23,19 @@ function Charm(spec) {
     this.status = 'normal';
 }
 
+Charm.prototype.halt = function() {
+    console.log("halting!");
+    this.body.SetGravityScale(0);
+    this.body.SetLinearVelocity( Box2D.b2Vec2( 0, 0) );
+    this.body.SetAngularVelocity( 0 );
+}
+
+Charm.prototype.resume = function() {
+    console.log("resuming!");
+    //this.selectedCharm.status = 'normal';
+    this.body.SetGravityScale(1);
+}
+
 Charm.prototype.translate = function(oldPhys, dx, dy) {
     var b2Pos = new Box2D.b2Vec2( oldPhys.x + dx, oldPhys.y + dy);
     this.body.SetTransform( b2Pos, oldPhys.angle );
