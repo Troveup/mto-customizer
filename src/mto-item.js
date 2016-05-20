@@ -41,7 +41,7 @@ MTOItem.prototype.spawnCharm = function(x, y, anchorOffsetDist) {
 
 
 var groundX = 0;
-var groundY = -20;
+var groundY = -29.5;
 var oblongWidth = 60;
 var oblongHeight = 1;
 
@@ -115,10 +115,23 @@ MTOItem.prototype.stepPhysics = function(dt) {
     }.bind(this));
 };
 
-MTOItem.prototype.forConnectedCharms = function(seedCharm, fn) {
+MTOItem.prototype.traverseHanging = function(seedCharm, fn) {
+    var checkQueue = [ seedCharm ];
+    for (var i = 0; i < checkQueue.length; i++) {
+        fn(checkQueue[i]);
+        checkQueue[i].eachAnchor(function(anchor, isParent) {
+            if (!isParent && anchor.attachedAnchor) {
+                checkQueue.push(anchor.attachedAnchor.ownerCharm);
+            }
+        });
+    }
+};
+
+MTOItem.prototype.traverseConnected = function(seedCharm, fn) {
     var visited = Object.create(null);
     var checkQueue = [ seedCharm ];
     visited[seedCharm.key] = true;
+
     for (var i = 0; i < checkQueue.length; i++) {
         fn(checkQueue[i]);
         checkQueue[i].eachAnchor(function(anchor, isParent) {
@@ -161,7 +174,7 @@ MTOItem.prototype.cacheLiveAnchors = function() {
     this.openRootAnchors = [];
     this.openFocusAnchors = [];
 
-    this.forConnectedCharms(this.baseChain, function(charm) {
+    this.traverseConnected(this.baseChain, function(charm) {
         charm.eachAnchor(function(anchor) {
             if (!anchor.attachedAnchor) {
                 that.openRootAnchors.push(anchor);
@@ -266,11 +279,13 @@ MTOItem.prototype.handleMouseup = function(evt) {
                 }
             });
 
-            var ownerCharm = closest.selectionAnchor.ownerCharm;
-            var physData = this.physics.summarize(ownerCharm.body);
-            closest.selectionAnchor.ownerCharm.translate(physData, closest.dx, closest.dy);
+            var selectionCharm = closest.selectionAnchor.ownerCharm;
+            this.traverseHanging(selectionCharm, function(hangingCharm) {
+                var physData = this.physics.summarize(hangingCharm.body);
+                hangingCharm.translate(physData, closest.dx, closest.dy);
+            }.bind(this));
             this.attachAnchors(closest.selectionAnchor, closest.hangingAnchor);
-            ownerCharm.parentAnchor = closest.selectionAnchor;
+            selectionCharm.parentAnchor = closest.selectionAnchor;
         }
         this.clearAnchorCache();
     }
@@ -285,8 +300,18 @@ MTOItem.prototype.handleMousemove = function(evt) {
         var dx = mousePos.x - oldMousePos.x;
         var dy = mousePos.y - oldMousePos.y;
 
-        var oldPhysical = this.physics.summarize(this.selectedCharm.body);
-        this.selectedCharm.translate(oldPhysical, dx, dy);
+        // use this if you only want to translate the selected charm
+        //var physData = this.physics.summarize(this.selectedCharm.body);
+        //this.selectedCharm.translate(physData, dx, dy);
+
+        // use this if you want to translate the selected charm and all those hanging from it
+        this.traverseHanging(this.selectedCharm, function(hangingCharm) {
+            var physData = this.physics.summarize(hangingCharm.body);
+            hangingCharm.translate(physData, dx, dy);
+        }.bind(this));
+
+        //var oldPhysical = this.physics.summarize(this.selectedCharm.body);
+        //this.selectedCharm.translate(oldPhysical, dx, dy);
     }
     oldMousePos = mousePos;
 };
