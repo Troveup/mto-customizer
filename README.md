@@ -18,3 +18,10 @@ if you need distributable for use in another project you can generate it with th
     webpack
 
 which will place it at `build/MTO.js`.
+
+*Note:* If errors like "Cannot resolve module 'run'" show themselves, try running the 
+
+    webpack
+    
+command, first.
+    
