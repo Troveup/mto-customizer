@@ -70,7 +70,8 @@ MTOItem.prototype.iterateCharms = function(callback) {
     return this.charmList.map(callback);
 };
 
-var anchorRadius = 2;
+var anchorDrawRadius = 1;
+var anchorSnapRadius = 3;
 MTOItem.prototype.render = function() {
     this.wrappedCanvas.clean();
 
@@ -83,7 +84,7 @@ MTOItem.prototype.render = function() {
         }
         charm.eachAnchor(function(anchor, isParent) {
             var o = anchor.getTransformedOffset();
-            this.wrappedCanvas.drawCircle(o.x, o.y, anchorRadius, 'black');
+            this.wrappedCanvas.drawCircle(o.x, o.y, anchorDrawRadius, 'black');
         }.bind(this));
     }.bind(this));
 
@@ -91,7 +92,7 @@ MTOItem.prototype.render = function() {
     this.wrappedCanvas.drawRectangle(r.x, r.y, r.angle, oblongWidth, oblongHeight, 'black');
     this.baseChain.eachAnchor(function(anchor, isParent) {
         var o = anchor.getTransformedOffset();
-        this.wrappedCanvas.drawCircle(o.x, o.y, anchorRadius, 'black');
+        this.wrappedCanvas.drawCircle(o.x, o.y, anchorDrawRadius, 'black');
     }.bind(this));
 
     this.drawGround();
@@ -160,7 +161,6 @@ MTOItem.prototype.cacheLiveAnchors = function() {
     this.openRootAnchors = [];
     this.openFocusAnchors = [];
 
-    console.warn("Sorting anchors not properly iterating through linked anchors");
     this.forConnectedCharms(this.baseChain, function(charm) {
         charm.eachAnchor(function(anchor) {
             if (!anchor.attachedAnchor) {
@@ -191,21 +191,21 @@ MTOItem.prototype.getClosestCharmClicked = function(mousePos) {
     return closestCharm;
 };
 
+console.warn("TODO: fix anchor detachment");
 MTOItem.prototype.detachParentCharm = function(selectedCharm) {
     var pa = selectedCharm.parentAnchor;
     if (pa) {
-        console.log("detaching parent");
         var parentCharm = pa.attachedAnchor.ownerCharm;
         pa.attachedAnchor.attachedAnchor = null;
         pa.attachedAnchor = null;
         this.physics.world.DestroyJoint(pa.joint);
+        selectedCharm.parentAnchor = null;
         return parentCharm;
     }
 
     return null;
 };
 
-console.warn("TODO: fix buggy logic for detecting anchor collisions");
 MTOItem.prototype.findAnchorCollisions = function(overlapRadius = 5) {
     var overlappingAnchorPairs = [];
 
@@ -226,7 +226,6 @@ MTOItem.prototype.findAnchorCollisions = function(overlapRadius = 5) {
 };
 
 MTOItem.prototype.attachAnchors = function(anchorA, anchorB) {
-    console.log("TODO: connect anchors and add joint to physics");
     var bodyA = anchorA.ownerCharm.body;
     var bodyB = anchorB.ownerCharm.body;
 
@@ -236,15 +235,6 @@ MTOItem.prototype.attachAnchors = function(anchorA, anchorB) {
     anchorA.attachedAnchor = anchorB;
     anchorB.attachedAnchor = anchorA;
 };
-
-// mousedown
-    // determine clicked charm, quit if none
-    // detach clicked charm
-    // immobilize clicked charm
-    // cache relevant anchor sets
-    // set item.grabbed to clicked charm
-// mouseup
-    //
 
 MTOItem.prototype.handleMousedown = function(evt) {
     var mousePos = this.wrappedCanvas.getTransformedCoords(evt.clientX, evt.clientY);
@@ -265,10 +255,10 @@ MTOItem.prototype.handleMouseup = function(evt) {
         this.selectedCharm.resume();
         this.selectedCharm = null;
 
-        var collisions = this.findAnchorCollisions(2*anchorRadius);
-        var closest = null;
-        var closestDist = Infinity;
+        var collisions = this.findAnchorCollisions(2*anchorSnapRadius);
         if (collisions.length > 0) {
+            var closest = null;
+            var closestDist = Infinity;
             collisions.map(function(hitReport) {
                 if (!closest || hitReport.separation < closestDist) {
                     closest = hitReport;
@@ -280,6 +270,7 @@ MTOItem.prototype.handleMouseup = function(evt) {
             var physData = this.physics.summarize(ownerCharm.body);
             closest.selectionAnchor.ownerCharm.translate(physData, closest.dx, closest.dy);
             this.attachAnchors(closest.selectionAnchor, closest.hangingAnchor);
+            ownerCharm.parentAnchor = closest.selectionAnchor;
         }
         this.clearAnchorCache();
     }
