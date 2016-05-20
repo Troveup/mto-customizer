@@ -8,7 +8,8 @@ function Anchor(spec, owner) {
 }
 
 Anchor.prototype.toString = function() {
-    return "Anchor offset: [ "+ this.offset.x +", "+ this.offset.y +" ]";
+    var off = this.getTransformedOffset();
+    return "Anchor offset: [ "+ off.x +", "+ off.y +" ]";
 }
 
 Anchor.prototype.getTransformedOffset = function() {

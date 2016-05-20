@@ -42,8 +42,6 @@ MTOItem.prototype.spawnCharm = function(x, y, anchorOffsetDist) {
 
 var groundX = 0;
 var groundY = -20;
-//var roofX = 0;
-//var roofY = 29.5;
 var oblongWidth = 60;
 var oblongHeight = 1;
 
@@ -66,7 +64,6 @@ MTOItem.prototype.addCharmsToSim = function() {
     this.charmList.map(function(c){
         c.body = this.physics.createBox(c.pos.x, c.pos.y, c.angleInRadians, c.width, c.height, 'dynamic');
     }.bind(this));
-
 };
 
 MTOItem.prototype.iterateCharms = function(callback) {
@@ -136,17 +133,25 @@ MTOItem.prototype.forConnectedCharms = function(seedCharm, fn) {
 };
 
 MTOItem.prototype.debugCachedAnchors = function() {
-    var rootStrings = this.openRootAnchors.map(function(anchor) {
-        return anchor.toString();
-    });
-    var focusStrings = this.openFocusAnchors.map(function(anchor) {
-        return anchor.toString();
-    });
+    if (this.openRootAnchors) {
+        var rootStrings = this.openRootAnchors.map(function(anchor) {
+            return anchor.toString();
+        });
+    }
 
-    var debugStrings = ["Root anchors: "].concat(rootStrings, ["Focus anchors:"], focusStrings);
-    console.log("Debug strings", debugStrings);
-    return debugStrings.join("<br>");
+    if (this.openFocusAnchors) {
+        var focusStrings = this.openFocusAnchors.map(function(anchor) {
+            return anchor.toString();
+        });
+    }
+
+    return ["Root anchors: "].concat(rootStrings, ["Focus anchors:"], focusStrings).join("<br>");
 };
+
+MTOItem.prototype.clearAnchorCache = function() {
+    this.openRootAnchors = [];
+    this.openFocusAnchors = [];
+}
 
 // use base chain as starting point for valid anchors to attach to, will be used to
 // check against any open anchors on the focused charm for connections
@@ -275,9 +280,8 @@ MTOItem.prototype.handleMouseup = function(evt) {
             var physData = this.physics.summarize(ownerCharm.body);
             closest.selectionAnchor.ownerCharm.translate(physData, closest.dx, closest.dy);
             this.attachAnchors(closest.selectionAnchor, closest.hangingAnchor);
-            this.openRootAnchors = [];
-            this.openFocusAnchors = [];
         }
+        this.clearAnchorCache();
     }
 };
 
