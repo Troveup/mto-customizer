@@ -82,6 +82,7 @@ WrappedCanvas.prototype.drawImage = function(x, y, angleInRadians, width, height
     this.context.save();
     this.context.translate(x, y);
     this.context.rotate(angleInRadians);
+    this.context.scale(1, -1);
 
     var hx = width / 2;
     var hy = height / 2;
