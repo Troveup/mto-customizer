@@ -3,21 +3,31 @@
 var WrappedCanvas = require("./wrapped-canvas.js");
 var MTOItem = require("./mto-item.js");
 
-var necklaceSpec = {
-    imgURL: "/demo-chain.png",
-    position: new THREE.Vector2(0, 25),
-    width: 60,
-    height: 80,
-    anchors: [
-        { offset: new THREE.Vector2(0.75, -15.5) }
-    ]
-};
-
 var linkWidth = 112 / 60;
 var linkHeight = 350 / 60;
-
 var anchorOffsetDist = 2.3;
-//var anchorOffsetDist = 4.6;
+
+var necklaceOptions = [
+    {
+        imgURL: "/demo-chain.png",
+        position: new THREE.Vector2(0, 25),
+        width: 60,
+        height: 80,
+        anchors: [
+            { offset: new THREE.Vector2(0.75, -15.5) }
+        ]
+    },
+    {
+        imgURL: "/demo-chain.png",
+        position: new THREE.Vector2(0, 25),
+        width: 60,
+        height: 80,
+        anchors: [
+            { offset: new THREE.Vector2(-2, -15.5) },
+            { offset: new THREE.Vector2(2, -15.5) }
+        ]
+    }
+];
 
 var DEG_TO_RAD = Math.PI / 180;
 var componentSpecs = [
@@ -77,9 +87,17 @@ function loop() {
     item.render();
 }
 
+var activeChainIndex = 0;
+function toggleBaseChain() {
+    // increment first since we started on zero
+    activeChainIndex = (activeChainIndex + 1) % necklaceOptions.length;
+    var currentChainSpec = necklaceOptions[activeChainIndex];
+    item.setBaseChain(currentChainSpec);
+}
+
 var testCanvas;
 function main() {
-    item = new MTOItem('canvas', necklaceSpec, componentSpecs);
+    item = new MTOItem('canvas', necklaceOptions[activeChainIndex], componentSpecs);
     canvas.addEventListener('mousedown', item.handleMousedown.bind(item));
     canvas.addEventListener('mouseup', item.handleMouseup.bind(item));
     canvas.addEventListener('mousemove', item.handleMousemove.bind(item), false);
@@ -111,22 +129,9 @@ function addNewCharm() {
     });
 }
 
-function updateBaseChain() {
-    item.setBaseChain({
-        imgURL: "/demo-chain.png",
-        position: new THREE.Vector2(0, 25),
-        width: 60,
-        height: 80,
-        anchors: [
-            { offset: new THREE.Vector2(-1, -15.5) },
-            { offset: new THREE.Vector2(1, -15.5) }
-        ]
-    });
-}
-
 function deleteSelectedCharm() {
     item.deleteCharm();
 }
 
-module.exports = { main, writeDebugInfo, addNewCharm, deleteSelectedCharm, updateBaseChain };
+module.exports = { main, writeDebugInfo, addNewCharm, deleteSelectedCharm, toggleBaseChain };
 
