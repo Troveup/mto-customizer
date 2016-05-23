@@ -49,8 +49,6 @@ Charm.prototype.resume = function() {
 Charm.prototype.translate = function(oldPhys, dx, dy) {
     var b2Pos = new Box2D.b2Vec2( oldPhys.x + dx, oldPhys.y + dy);
     this.body.SetTransform( b2Pos, oldPhys.angle );
-
-    // should hanging chains be recursively translated?
 };
 
 Charm.prototype.loadAssets = function() {

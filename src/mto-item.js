@@ -15,6 +15,7 @@ function MTOItem(canvasID, baseSpec, charmSpecList) {
     });
 
     this.selectedCharm = null;
+    this.draggingCharm = false;
     this.groundBody = null;
 
     this.physics = new Box2DHelper();
@@ -191,7 +192,6 @@ MTOItem.prototype.getClosestCharmClicked = function(mousePos) {
     return closestCharm;
 };
 
-console.warn("TODO: fix anchor detachment");
 MTOItem.prototype.detachParentCharm = function(selectedCharm) {
     var pa = selectedCharm.parentAnchor;
     if (pa) {
@@ -238,22 +238,23 @@ MTOItem.prototype.attachAnchors = function(anchorA, anchorB) {
 
 MTOItem.prototype.handleMousedown = function(evt) {
     var mousePos = this.wrappedCanvas.getTransformedCoords(evt.clientX, evt.clientY);
-    var selected = this.getClosestCharmClicked(mousePos);
-    if (selected) {
-        this.selectedCharm = selected;
+    var clickedCharm = this.getClosestCharmClicked(mousePos);
+    if (clickedCharm) {
+        this.selectedCharm = clickedCharm;
+        this.draggingCharm = true;
 
-        this.detachParentCharm(selected);
+        this.detachParentCharm(clickedCharm);
         this.cacheLiveAnchors();
         this.selectedCharm.halt();
-
-        this.selectedCharm.status = 'selected';
+    } else {
+        this.selectedCharm = null;
+        console.warn("TODO: could check gravity here?");
     }
 };
 
 MTOItem.prototype.handleMouseup = function(evt) {
-    if (this.selectedCharm) {
+    if (this.draggingCharm) {
         this.selectedCharm.resume();
-        this.selectedCharm = null;
 
         var collisions = this.findAnchorCollisions(2*anchorSnapRadius);
         if (collisions.length > 0) {
@@ -277,13 +278,32 @@ MTOItem.prototype.handleMouseup = function(evt) {
         }
         this.clearAnchorCache();
     }
+    this.draggingCharm = false;
+};
+
+MTOItem.prototype.deleteCharm = function() {
+    if (this.selectedCharm) {
+        this.physics.world.DestroyBody( this.selectedCharm.body );
+
+        var deleteIndex = -1;
+        this.charmList.map(function(charm, i) {
+            if (charm == this.selectedCharm) {
+                deleteIndex = i;
+            }
+        }.bind(this));
+
+        if (deleteIndex > -1) {
+            this.charmList.splice(deleteIndex, 1);
+        }
+        this.selectedCharm = null;
+        this.draggingCharm = false;
+    }
 };
 
 var oldMousePos;
 MTOItem.prototype.handleMousemove = function(evt) {
     var mousePos = this.wrappedCanvas.getTransformedCoords(evt.clientX, evt.clientY);
-
-    if (this.selectedCharm) {
+    if (this.draggingCharm) {
 
         var dx = mousePos.x - oldMousePos.x;
         var dy = mousePos.y - oldMousePos.y;

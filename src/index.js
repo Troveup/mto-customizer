@@ -114,5 +114,9 @@ function addNewCharm() {
     });
 }
 
-module.exports = { main, writeDebugInfo, addNewCharm };
+function deleteSelectedCharm() {
+    item.deleteCharm();
+}
+
+module.exports = { main, writeDebugInfo, addNewCharm, deleteSelectedCharm };
 
