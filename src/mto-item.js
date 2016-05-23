@@ -31,14 +31,6 @@ function MTOItem(canvasID, baseSpec, charmSpecList) {
     }.bind(this));
 }
 
-MTOItem.prototype.addCharm = function(newCharmSpec) {
-    var newCharm = new Charm(newCharmSpec);
-    newCharm.body = this.physics.createBox(newCharm.pos.x, newCharm.pos.y, newCharm.angleInRadians, newCharm.width, newCharm.height, 'dynamic');
-    newCharm.loadAssets().then(function(){
-        this.charmList.push(newCharm);
-    }.bind(this));
-};
-
 MTOItem.prototype.setBaseChain = function(newCharmSpec) {
     if (this.baseChain) {
         console.warn("TODO: delete body of existing base chain");
@@ -49,6 +41,33 @@ MTOItem.prototype.setBaseChain = function(newCharmSpec) {
     b.loadAssets().then(function() {
         this.baseChain = b;
     }.bind(this));
+};
+
+MTOItem.prototype.addCharm = function(newCharmSpec) {
+    var newCharm = new Charm(newCharmSpec);
+    newCharm.body = this.physics.createBox(newCharm.pos.x, newCharm.pos.y, newCharm.angleInRadians, newCharm.width, newCharm.height, 'dynamic');
+    newCharm.loadAssets().then(function(){
+        this.charmList.push(newCharm);
+    }.bind(this));
+};
+
+MTOItem.prototype.deleteCharm = function() {
+    if (this.selectedCharm) {
+        this.physics.world.DestroyBody( this.selectedCharm.body );
+
+        var deleteIndex = -1;
+        this.charmList.map(function(charm, i) {
+            if (charm == this.selectedCharm) {
+                deleteIndex = i;
+            }
+        }.bind(this));
+
+        if (deleteIndex > -1) {
+            this.charmList.splice(deleteIndex, 1);
+        }
+        this.selectedCharm = null;
+        this.draggingCharm = false;
+    }
 };
 
 MTOItem.prototype.iterateCharms = function(callback) {
@@ -179,12 +198,16 @@ MTOItem.prototype.cacheLiveAnchors = function() {
 
 MTOItem.prototype.getClosestCharmClicked = function(mousePos) {
     var closestDist = Infinity;
-    var closestCharm = null;
+    var closestCharm = {
+        hit: false
+    };
     this.charmList.map(function(charm) {
         var result = charm.hitCheck(mousePos);
         if (result.hit) {
-            if (!closestCharm || result.dist < closestDist) {
-                closestCharm = charm;
+            if (!closestCharm.hit || result.dist < closestDist) {
+                closestCharm.hit = true;
+                closestCharm.charm = charm;
+                closestCharm.offset = result.offset;
                 closestDist = result.dist;
             }
         }
@@ -238,12 +261,13 @@ MTOItem.prototype.attachAnchors = function(anchorA, anchorB) {
 
 MTOItem.prototype.handleMousedown = function(evt) {
     var mousePos = this.wrappedCanvas.getTransformedCoords(evt.clientX, evt.clientY);
-    var clickedCharm = this.getClosestCharmClicked(mousePos);
-    if (clickedCharm) {
-        this.selectedCharm = clickedCharm;
+    var clickResult = this.getClosestCharmClicked(mousePos);
+    if (clickResult.hit) {
+        this.selectedCharm = clickResult.charm;
         this.draggingCharm = true;
+        this.dragOffset = clickResult.offset;
 
-        this.detachParentCharm(clickedCharm);
+        this.detachParentCharm(clickResult.charm);
         this.cacheLiveAnchors();
         this.selectedCharm.halt();
     } else {
@@ -255,6 +279,7 @@ MTOItem.prototype.handleMousedown = function(evt) {
 MTOItem.prototype.handleMouseup = function(evt) {
     if (this.draggingCharm) {
         this.selectedCharm.resume();
+        this.dragOffset = null;
 
         var collisions = this.findAnchorCollisions(2*anchorSnapRadius);
         if (collisions.length > 0) {
@@ -281,44 +306,16 @@ MTOItem.prototype.handleMouseup = function(evt) {
     this.draggingCharm = false;
 };
 
-MTOItem.prototype.deleteCharm = function() {
-    if (this.selectedCharm) {
-        this.physics.world.DestroyBody( this.selectedCharm.body );
+MTOItem.prototype.syncDragged = function() {
+    var newX = this.mousePos.x - this.dragOffset.x;
+    var newY = this.mousePos.y - this.dragOffset.y;
+    this.selectedCharm.moveTo( newX, newY );
 
-        var deleteIndex = -1;
-        this.charmList.map(function(charm, i) {
-            if (charm == this.selectedCharm) {
-                deleteIndex = i;
-            }
-        }.bind(this));
-
-        if (deleteIndex > -1) {
-            this.charmList.splice(deleteIndex, 1);
-        }
-        this.selectedCharm = null;
-        this.draggingCharm = false;
-    }
+    this.selectedCharm.halt();
 };
 
-var oldMousePos;
 MTOItem.prototype.handleMousemove = function(evt) {
-    var mousePos = this.wrappedCanvas.getTransformedCoords(evt.clientX, evt.clientY);
-    if (this.draggingCharm) {
-
-        var dx = mousePos.x - oldMousePos.x;
-        var dy = mousePos.y - oldMousePos.y;
-
-        // use this if you only want to translate the selected charm
-        //var physData = this.physics.summarize(this.selectedCharm.body);
-        //this.selectedCharm.translate(physData, dx, dy);
-
-        // use this if you want to translate the selected charm and all those hanging from it
-        this.traverseHanging(this.selectedCharm, function(hangingCharm) {
-            var physData = this.physics.summarize(hangingCharm.body);
-            hangingCharm.translate(physData, dx, dy);
-        }.bind(this));
-    }
-    oldMousePos = mousePos;
+    this.mousePos = this.wrappedCanvas.getTransformedCoords(evt.clientX, evt.clientY);
 };
 
 module.exports = MTOItem;

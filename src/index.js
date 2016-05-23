@@ -83,6 +83,11 @@ function loop() {
     dt = currTime - lastTime;
     lastTime = currTime;
 
+    if (item.draggingCharm) {
+        //var mousePos = this.wrappedCanvas.getTransformedCoords(evt.clientX, evt.clientY);
+        item.syncDragged();
+    }
+
     item.stepPhysics(dt);
     item.render();
 }
@@ -116,6 +121,7 @@ function writeDebugInfo(root, secondsDelay) {
     }, secondsDelay*1000);
 }
 
+// add new charm definitions here
 function addNewCharm() {
     item.addCharm({
         imgURL: "/directed-charm-link.png",

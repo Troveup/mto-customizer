@@ -51,6 +51,11 @@ Charm.prototype.translate = function(oldPhys, dx, dy) {
     this.body.SetTransform( b2Pos, oldPhys.angle );
 };
 
+Charm.prototype.moveTo = function(x, y) {
+    var b2Pos = new Box2D.b2Vec2( x, y );
+    this.body.SetTransform( b2Pos, this.body.GetAngle() );
+};
+
 Charm.prototype.loadAssets = function() {
     var that = this;
 
@@ -95,7 +100,8 @@ Charm.prototype.hitCheck = function(checkPos) {
 
     return {
         hit: true,
-        dist: displacement.length()
+        dist: displacement.length(),
+        offset: displacement
     };
 };
 
@@ -137,10 +143,6 @@ Charm.prototype.compareAnchors = function(comparison) {
 };
 
 // these functions have to do with non-physical means of specifying change in location
-Charm.prototype.moveTo = function(x, y) {
-    this.pos.set(x, y);
-}
-
 Charm.prototype.transitionTo = function(x, y, duration) {
     this.transitionActive = true;
 
