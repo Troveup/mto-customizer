@@ -12,7 +12,7 @@ function createGUID() {
 function Charm(spec) {
     this.key = createGUID(); // think of better method...
     this.imgURL = spec.imgURL;
-    this.pos = spec.position;
+    this.pos = spec.position.clone();
     this.width = spec.width;
     this.height = spec.height;
     this.angleInRadians = spec.rotation || 0;

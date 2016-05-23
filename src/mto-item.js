@@ -25,10 +25,14 @@ function MTOItem(canvasID, baseSpec, charmSpecList) {
     });
 
     this.groundBody = this.physics.createBox(groundX, groundY, 0, oblongWidth, oblongHeight, 'static');
-    this.setBaseChain(baseSpec);
-    charmSpecList.map(function(spec) {
-        this.addCharm(spec);
-    }.bind(this));
+    if (baseSpec) {
+        this.setBaseChain(baseSpec);
+    }
+    if (charmSpecList) {
+        charmSpecList.map(function(spec) {
+            this.addCharm(spec);
+        }.bind(this));
+    }
 }
 
 MTOItem.prototype.setBaseChain = function(newCharmSpec) {

@@ -11,9 +11,11 @@
 </head>
 <body>
     <canvas width="600" height="600" id="canvas"></canvas>
-    <button class="debugButton" onclick="MTO.addNewCharm();"> Add Charm </button>
-    <button class="debugButton" onclick="MTO.deleteSelectedCharm();"> Deleted Selected </button>
-    <button class="debugButton" onclick="MTO.toggleBaseChain();"> Switch Base Chain </button>
+    <button onclick="MTO.addNewCharm('debug-link');"> Add Debug Link Charm </button>
+    <button onclick="MTO.addNewCharm('link');"> Add Link Charm </button>
+    <button onclick="MTO.addNewCharm('splitter');"> Add Splitter Charm </button>
+    <button onclick="MTO.deleteSelectedCharm();"> Deleted Selected </button>
+    <button onclick="MTO.toggleBaseChain();"> Switch Base Chain </button>
 
     <div id="logMessages"></div>
 

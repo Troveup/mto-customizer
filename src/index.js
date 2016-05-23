@@ -3,10 +3,6 @@
 var WrappedCanvas = require("./wrapped-canvas.js");
 var MTOItem = require("./mto-item.js");
 
-var linkWidth = 112 / 60;
-var linkHeight = 350 / 60;
-var anchorOffsetDist = 2.3;
-
 var necklaceOptions = [
     {
         imgURL: "/demo-chain.png",
@@ -30,21 +26,14 @@ var necklaceOptions = [
 ];
 
 var DEG_TO_RAD = Math.PI / 180;
-var componentSpecs = [
-    {
-        imgURL: "/directed-charm-link.png",
-        position: new THREE.Vector2(-5, 0),
-        width: linkWidth,
-        height: linkHeight,
-        anchors: [
-            { offset: new THREE.Vector2(0, anchorOffsetDist) },
-            { offset: new THREE.Vector2(0, -anchorOffsetDist) }
-        ]
-    },
-    {
+
+var linkWidth = 112 / 60;
+var linkHeight = 350 / 60;
+var anchorOffsetDist = 2.3;
+var charmTypeSpecs = {
+    'debug-link': {
         imgURL: "/directed-charm-link.png",
         position: new THREE.Vector2(0, 0),
-        rotation: 45 * DEG_TO_RAD,
         width: linkWidth,
         height: linkHeight,
         anchors: [
@@ -52,9 +41,9 @@ var componentSpecs = [
             { offset: new THREE.Vector2(0, -anchorOffsetDist) }
         ]
     },
-    {
-        imgURL: "/directed-charm-link.png",
-        position: new THREE.Vector2(5, 0),
+    'link': {
+        imgURL: "/charm-link.png",
+        position: new THREE.Vector2(0, 0),
         width: linkWidth,
         height: linkHeight,
         anchors: [
@@ -62,17 +51,19 @@ var componentSpecs = [
             { offset: new THREE.Vector2(0, -anchorOffsetDist) }
         ]
     },
-    {
-        imgURL: "/directed-charm-link.png",
-        position: new THREE.Vector2(7, 0),
+    'splitter': {
+        imgURL: "/charm-link.png",
+        position: new THREE.Vector2(0, 0),
         width: linkWidth,
         height: linkHeight,
         anchors: [
-            { offset: new THREE.Vector2(0, anchorOffsetDist) },
-            { offset: new THREE.Vector2(0, -anchorOffsetDist) }
+            { offset: new THREE.Vector2(-0.75, 0) },
+            { offset: new THREE.Vector2(0.75, 1.5) },
+            { offset: new THREE.Vector2(0.75, 0) },
+            { offset: new THREE.Vector2(0.75, -1.5) }
         ]
     }
-];
+};
 
 var item;
 var dt, currTime, lastTime = Date.now();
@@ -94,15 +85,16 @@ function loop() {
 
 var activeChainIndex = 0;
 function toggleBaseChain() {
-    // increment first since we started on zero
-    activeChainIndex = (activeChainIndex + 1) % necklaceOptions.length;
     var currentChainSpec = necklaceOptions[activeChainIndex];
     item.setBaseChain(currentChainSpec);
+    activeChainIndex = (activeChainIndex + 1) % necklaceOptions.length;
 }
 
 var testCanvas;
 function main() {
-    item = new MTOItem('canvas', necklaceOptions[activeChainIndex], componentSpecs);
+    item = new MTOItem('canvas');
+
+    toggleBaseChain();
     canvas.addEventListener('mousedown', item.handleMousedown.bind(item));
     canvas.addEventListener('mouseup', item.handleMouseup.bind(item));
     canvas.addEventListener('mousemove', item.handleMousemove.bind(item), false);
@@ -122,17 +114,8 @@ function writeDebugInfo(root, secondsDelay) {
 }
 
 // add new charm definitions here
-function addNewCharm() {
-    item.addCharm({
-        imgURL: "/directed-charm-link.png",
-        position: new THREE.Vector2(0, 0),
-        width: linkWidth,
-        height: linkHeight,
-        anchors: [
-            { offset: new THREE.Vector2(0, anchorOffsetDist) },
-            { offset: new THREE.Vector2(0, -anchorOffsetDist) }
-        ]
-    });
+function addNewCharm(key) {
+    item.addCharm(charmTypeSpecs[key]);
 }
 
 function deleteSelectedCharm() {
@@ -140,4 +123,5 @@ function deleteSelectedCharm() {
 }
 
 module.exports = { main, writeDebugInfo, addNewCharm, deleteSelectedCharm, toggleBaseChain };
+
 
