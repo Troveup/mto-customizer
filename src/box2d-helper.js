@@ -23,6 +23,8 @@ Box2DHelper.prototype.init = function() {
 Box2DHelper.prototype.createBox = function(x, y, desiredAngle, width, height, type) {
     if (type == 'static') {
         this.bodyDef.set_type(Box2D.b2_staticBody);
+    } else if (type == 'kinematic') {
+        this.bodyDef.set_type(Box2D.b2_kinematicBody);
     } else {
         this.bodyDef.set_type(Box2D.b2_dynamicBody);
     }

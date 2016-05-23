@@ -11,9 +11,7 @@
 </head>
 <body>
     <canvas width="600" height="600" id="canvas"></canvas>
-    <button class="debugButton" data-delay="1"> Dump in 1 Second</button>
-    <button class="debugButton" data-delay="2"> Dump in 2 Seconds</button>
-    <button class="debugButton" data-delay="5"> Dump in 5 Seconds</button>
+    <button class="debugButton" onclick="MTO.addNewCharm();"> Add Charm </button>
     <div id="logMessages"></div>
 
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r73/three.js"></script>
@@ -21,12 +19,6 @@
     <script type="text/javascript" src="/assets/MTO.js"></script>
     <script type="text/javascript">
         MTO.main();
-        var buttons = document.querySelectorAll(".debugButton");
-        for (var i = 0; i < buttons.length; i++) {
-            buttons[i].addEventListener('click', function(evt) {
-                MTO.writeDebugInfo(document.getElementById("logMessages"), evt.target.getAttribute('data-delay'));
-            });
-        }
     </script>
 </body>
 </html>

@@ -13,10 +13,11 @@ var necklaceSpec = {
     ]
 };
 
-var linkWidth = 112 / 30;
-var linkHeight = 350 / 30;
+var linkWidth = 112 / 60;
+var linkHeight = 350 / 60;
 
-var anchorOffsetDist = 4.6;
+var anchorOffsetDist = 2.3;
+//var anchorOffsetDist = 4.6;
 
 var DEG_TO_RAD = Math.PI / 180;
 var componentSpecs = [
@@ -100,5 +101,18 @@ function writeDebugInfo(root, secondsDelay) {
     }, secondsDelay*1000);
 }
 
-module.exports = { main, writeDebugInfo };
+function addNewCharm() {
+    item.addCharm({
+        imgURL: "/directed-charm-link.png",
+        position: new THREE.Vector2(0, 0),
+        width: linkWidth,
+        height: linkHeight,
+        anchors: [
+            { offset: new THREE.Vector2(0, anchorOffsetDist) },
+            { offset: new THREE.Vector2(0, -anchorOffsetDist) }
+        ]
+    });
+}
+
+module.exports = { main, writeDebugInfo, addNewCharm };
 

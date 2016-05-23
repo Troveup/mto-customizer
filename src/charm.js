@@ -59,10 +59,10 @@ Charm.prototype.loadAssets = function() {
     return new Promise(function(resolve, reject){
         var img = new Image()
         img.onload = function(){
-            resolve(that.imgURL)
+            resolve(that)
         }
         img.onerror = function(){
-            reject(that.imgURL)
+            reject(that)
         }
 
         img.src = that.imgURL

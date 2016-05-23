@@ -21,6 +21,14 @@ function MTOItem(canvasID, baseSpec, charmSpecList) {
     this.physics.init();
 }
 
+MTOItem.prototype.addCharm = function(newCharmSpec) {
+    var newCharm = new Charm(newCharmSpec);
+    newCharm.body = this.physics.createBox(newCharm.pos.x, newCharm.pos.y, newCharm.angleInRadians, newCharm.width, newCharm.height, 'dynamic');
+    newCharm.loadAssets().then(function(){
+        this.charmList.push(newCharm);
+    }.bind(this));
+};
+
 MTOItem.prototype.loadAssets = function() {
     var loadingPromises = this.charmList.map(function(charm){
         return charm.loadAssets();
@@ -38,6 +46,8 @@ var oblongHeight = 1;
 MTOItem.prototype.addCharmsToSim = function() {
     this.groundBody = this.physics.createBox(groundX, groundY, 0, oblongWidth, oblongHeight, 'static');
 
+    var b = this.baseChain;
+    b.body = this.physics.createBox( b.pos.x, b.pos.y, b.angleInRadians, 5, 5, 'static');
     this.charmList.map(function(c){
         c.body = this.physics.createBox(c.pos.x, c.pos.y, c.angleInRadians, c.width, c.height, 'dynamic');
         c.body.SetLinearDamping(0.3);
@@ -48,7 +58,7 @@ MTOItem.prototype.iterateCharms = function(callback) {
     return this.charmList.map(callback);
 };
 
-var anchorDrawRadius = 1;
+var anchorDrawRadius = 0.5;
 var anchorSnapRadius = 3;
 MTOItem.prototype.render = function() {
     this.wrappedCanvas.clean();
@@ -261,6 +271,7 @@ MTOItem.prototype.handleMouseup = function(evt) {
                 var physData = this.physics.summarize(hangingCharm.body);
                 hangingCharm.translate(physData, closest.dx, closest.dy);
             }.bind(this));
+
             this.attachAnchors(closest.selectionAnchor, closest.hangingAnchor);
             selectionCharm.parentAnchor = closest.selectionAnchor;
         }
@@ -286,9 +297,6 @@ MTOItem.prototype.handleMousemove = function(evt) {
             var physData = this.physics.summarize(hangingCharm.body);
             hangingCharm.translate(physData, dx, dy);
         }.bind(this));
-
-        //var oldPhysical = this.physics.summarize(this.selectedCharm.body);
-        //this.selectedCharm.translate(oldPhysical, dx, dy);
     }
     oldMousePos = mousePos;
 };
