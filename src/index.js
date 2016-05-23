@@ -58,9 +58,9 @@ var charmTypeSpecs = {
         height: linkHeight,
         anchors: [
             { offset: new THREE.Vector2(-0.75, 0) },
-            { offset: new THREE.Vector2(0.75, 1.5) },
+            { offset: new THREE.Vector2(0.75, 2) },
             { offset: new THREE.Vector2(0.75, 0) },
-            { offset: new THREE.Vector2(0.75, -1.5) }
+            { offset: new THREE.Vector2(0.75, -2) }
         ]
     }
 };
@@ -75,7 +75,6 @@ function loop() {
     lastTime = currTime;
 
     if (item.draggingCharm) {
-        //var mousePos = this.wrappedCanvas.getTransformedCoords(evt.clientX, evt.clientY);
         item.syncDragged();
     }
 
@@ -123,5 +122,4 @@ function deleteSelectedCharm() {
 }
 
 module.exports = { main, writeDebugInfo, addNewCharm, deleteSelectedCharm, toggleBaseChain };
-
 

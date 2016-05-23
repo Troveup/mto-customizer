@@ -95,7 +95,8 @@ MTOItem.prototype.render = function() {
         }
         charm.eachAnchor(function(anchor, isParent) {
             var o = anchor.getTransformedOffset();
-            this.wrappedCanvas.drawCircle(o.x, o.y, anchorDrawRadius, 'black');
+            var style = anchor.isOverlapped ? 'green' : 'black';
+            this.wrappedCanvas.drawCircle(o.x, o.y, anchorDrawRadius, style);
         }.bind(this));
     }.bind(this));
 
@@ -320,6 +321,24 @@ MTOItem.prototype.syncDragged = function() {
 
 MTOItem.prototype.handleMousemove = function(evt) {
     this.mousePos = this.wrappedCanvas.getTransformedCoords(evt.clientX, evt.clientY);
+
+    // committing short circuited while broken
+    if (false && this.draggingCharm) {
+
+        // clear all anchor overlap statuses
+        this.iterateCharms(function(charm) {
+            charm.eachAnchor(function(anchor, isParent) {
+                anchor.isOverlapped = false;
+            });
+        });
+
+        // set the affected anchor statuses to overlapped
+        var collisions = this.findAnchorCollisions(2*anchorSnapRadius);
+        collisions.map(function(hitReport) {
+            hitReport.selectionAnchor.isOverlapped = true;
+            hitReport.hangingAnchor.isOverlapped = true;
+        });
+    }
 };
 
 module.exports = MTOItem;
