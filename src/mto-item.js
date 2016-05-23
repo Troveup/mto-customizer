@@ -36,10 +36,7 @@ var oblongWidth = 60;
 var oblongHeight = 1;
 
 MTOItem.prototype.addCharmsToSim = function() {
-    // this is a debug line, should eventually remove
     this.groundBody = this.physics.createBox(groundX, groundY, 0, oblongWidth, oblongHeight, 'static');
-    var b = this.baseChain;
-    b.body = this.physics.createBox( b.pos.x, b.pos.y, b.angleInRadians, b.width, b.height, 'static' );
 
     this.charmList.map(function(c){
         c.body = this.physics.createBox(c.pos.x, c.pos.y, c.angleInRadians, c.width, c.height, 'dynamic');
@@ -56,7 +53,8 @@ var anchorSnapRadius = 3;
 MTOItem.prototype.render = function() {
     this.wrappedCanvas.clean();
 
-    this.wrappedCanvas.drawGrid(28, 28, 5);
+    var b = this.baseChain;
+    this.wrappedCanvas.drawImage(b.pos.x, b.pos.y, b.angleInRadians, b.width, b.height, b.img);
 
     this.iterateCharms(function(charm) {
         this.wrappedCanvas.drawImage(charm.pos.x, charm.pos.y, charm.angleInRadians, charm.width, charm.height, charm.img);
@@ -69,8 +67,6 @@ MTOItem.prototype.render = function() {
         }.bind(this));
     }.bind(this));
 
-    var r = this.physics.summarize(this.baseChain.body);
-    this.wrappedCanvas.drawRectangle(r.x, r.y, r.angle, oblongWidth, oblongHeight, 'black');
     this.baseChain.eachAnchor(function(anchor, isParent) {
         var o = anchor.getTransformedOffset();
         this.wrappedCanvas.drawCircle(o.x, o.y, anchorDrawRadius, 'black');

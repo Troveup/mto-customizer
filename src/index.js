@@ -3,19 +3,13 @@
 var WrappedCanvas = require("./wrapped-canvas.js");
 var MTOItem = require("./mto-item.js");
 
-var roofX = 0;
-var roofY = 25;
-var oblongWidth = 60;
-var oblongHeight = 1;
-
 var necklaceSpec = {
     imgURL: "/demo-chain.png",
-    position: new THREE.Vector2(roofX, roofY), // in untransformed grid, need to figure out less hacky way for this
-    width: oblongWidth,
-    height: oblongHeight,
+    position: new THREE.Vector2(0, 25),
+    width: 60,
+    height: 80,
     anchors: [
-        { offset: new THREE.Vector2(-5, -1) },
-        { offset: new THREE.Vector2(5, -1) }
+        { offset: new THREE.Vector2(0.75, -15.5) }
     ]
 };
 
