@@ -111,9 +111,22 @@ function addNewCharm() {
     });
 }
 
+function updateBaseChain() {
+    item.setBaseChain({
+        imgURL: "/demo-chain.png",
+        position: new THREE.Vector2(0, 25),
+        width: 60,
+        height: 80,
+        anchors: [
+            { offset: new THREE.Vector2(-1, -15.5) },
+            { offset: new THREE.Vector2(1, -15.5) }
+        ]
+    });
+}
+
 function deleteSelectedCharm() {
     item.deleteCharm();
 }
 
-module.exports = { main, writeDebugInfo, addNewCharm, deleteSelectedCharm };
+module.exports = { main, writeDebugInfo, addNewCharm, deleteSelectedCharm, updateBaseChain };
 
