@@ -3,16 +3,14 @@ var WrappedCanvas = require("./wrapped-canvas.js");
 var Charm = require("./charm.js");
 var Box2DHelper = require("./box2d-helper.js");
 
-function MTOItem(canvasID, baseSpec, charmSpecList) {
-    this.baseChain = new Charm(baseSpec);
-    this.charmList = charmSpecList.map(function(spec) {
-        return new Charm(spec);
-    });
+var groundX = 0;
+var groundY = -29.5;
+var oblongWidth = 60;
+var oblongHeight = 1;
 
-    this.wrappedCanvas = new WrappedCanvas(canvasID);
-    this.wrappedCanvas.setup({
-        pixelsToMeter: 10
-    });
+function MTOItem(canvasID, baseSpec, charmSpecList) {
+    this.baseChain = null;
+    this.charmList = [];
 
     this.selectedCharm = null;
     this.draggingCharm = false;
@@ -20,6 +18,17 @@ function MTOItem(canvasID, baseSpec, charmSpecList) {
 
     this.physics = new Box2DHelper();
     this.physics.init();
+
+    this.wrappedCanvas = new WrappedCanvas(canvasID);
+    this.wrappedCanvas.setup({
+        pixelsToMeter: 10
+    });
+
+    this.groundBody = this.physics.createBox(groundX, groundY, 0, oblongWidth, oblongHeight, 'static');
+    this.setBaseChain(baseSpec);
+    charmSpecList.map(function(spec) {
+        this.addCharm(spec);
+    }.bind(this));
 }
 
 MTOItem.prototype.addCharm = function(newCharmSpec) {
@@ -30,28 +39,15 @@ MTOItem.prototype.addCharm = function(newCharmSpec) {
     }.bind(this));
 };
 
-MTOItem.prototype.loadAssets = function() {
-    var loadingPromises = this.charmList.map(function(charm){
-        return charm.loadAssets();
-    }.bind(this));
-    loadingPromises.push( this.baseChain.loadAssets() );
+MTOItem.prototype.setBaseChain = function(newCharmSpec) {
+    if (this.baseChain) {
+        console.warn("TODO: delete body of existing base chain");
+    }
 
-    return Promise.all(loadingPromises);
-};
-
-var groundX = 0;
-var groundY = -29.5;
-var oblongWidth = 60;
-var oblongHeight = 1;
-
-MTOItem.prototype.addCharmsToSim = function() {
-    this.groundBody = this.physics.createBox(groundX, groundY, 0, oblongWidth, oblongHeight, 'static');
-
-    var b = this.baseChain;
-    b.body = this.physics.createBox( b.pos.x, b.pos.y, b.angleInRadians, 5, 5, 'static');
-    this.charmList.map(function(c){
-        c.body = this.physics.createBox(c.pos.x, c.pos.y, c.angleInRadians, c.width, c.height, 'dynamic');
-        c.body.SetLinearDamping(0.3);
+    var b = new Charm(newCharmSpec);
+    b.body = this.physics.createBox( b.pos.x, b.pos.y, b.angleInRadians, 1, 1, 'static');
+    b.loadAssets().then(function() {
+        this.baseChain = b;
     }.bind(this));
 };
 
@@ -64,8 +60,10 @@ var anchorSnapRadius = 3;
 MTOItem.prototype.render = function() {
     this.wrappedCanvas.clean();
 
-    var b = this.baseChain;
-    this.wrappedCanvas.drawImage(b.pos.x, b.pos.y, b.angleInRadians, b.width, b.height, b.img);
+    if (this.baseChain) {
+        var b = this.baseChain;
+        this.wrappedCanvas.drawImage(b.pos.x, b.pos.y, b.angleInRadians, b.width, b.height, b.img);
+    }
 
     this.iterateCharms(function(charm) {
         this.wrappedCanvas.drawImage(charm.pos.x, charm.pos.y, charm.angleInRadians, charm.width, charm.height, charm.img);
@@ -78,10 +76,12 @@ MTOItem.prototype.render = function() {
         }.bind(this));
     }.bind(this));
 
-    this.baseChain.eachAnchor(function(anchor, isParent) {
-        var o = anchor.getTransformedOffset();
-        this.wrappedCanvas.drawCircle(o.x, o.y, anchorDrawRadius, 'black');
-    }.bind(this));
+    if (this.baseChain) {
+        this.baseChain.eachAnchor(function(anchor, isParent) {
+            var o = anchor.getTransformedOffset();
+            this.wrappedCanvas.drawCircle(o.x, o.y, anchorDrawRadius, 'black');
+        }.bind(this));
+    }
 
     this.drawGround();
 };
