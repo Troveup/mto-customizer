@@ -37,7 +37,18 @@ function MTOItem(canvasID, baseSpec, charmSpecList) {
 
 MTOItem.prototype.setBaseChain = function(newCharmSpec) {
     if (this.baseChain) {
-        console.warn("TODO: delete body of existing base chain");
+        this.baseChain.eachAnchor(function(anchor) {
+            var attached = anchor.attachedAnchor;
+            if (attached) {
+                attached.attachedAnchor = null;
+                attached.ownerCharm.parentAnchor = null;
+                anchor.attachedAnchor = null;
+                attached.isOverlapped = false;
+                anchor.isOverlapped = false;
+                this.physics.world.DestroyJoint(anchor.joint);
+            }
+            this.baseChain = null;
+        }.bind(this));
     }
 
     var b = new Charm(newCharmSpec);
@@ -328,7 +339,11 @@ MTOItem.prototype.handleMousemove = function(evt) {
     // committing short circuited while broken
     if (this.draggingCharm) {
 
+
         // clear all anchor overlap statuses
+        this.baseChain.eachAnchor(function(anchor) {
+            anchor.isOverlapped = false;
+        });
         this.iterateCharms(function(charm) {
             charm.eachAnchor(function(anchor, isParent) {
                 anchor.isOverlapped = false;
@@ -345,8 +360,10 @@ MTOItem.prototype.handleMousemove = function(evt) {
                 closestDist = hitReport.separation;
             }
         });
-        closest.selectionAnchor.isOverlapped = true;
-        closest.hangingAnchor.isOverlapped = true;
+        if (closest) {
+            closest.selectionAnchor.isOverlapped = true;
+            closest.hangingAnchor.isOverlapped = true;
+        }
     }
 };
 
