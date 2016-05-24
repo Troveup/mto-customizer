@@ -50,6 +50,8 @@ MTOItem.prototype.setBaseChain = function(newCharmSpec) {
 MTOItem.prototype.addCharm = function(newCharmSpec) {
     var newCharm = new Charm(newCharmSpec);
     newCharm.body = this.physics.createBox(newCharm.pos.x, newCharm.pos.y, newCharm.angleInRadians, newCharm.width, newCharm.height, 'dynamic');
+    newCharm.body.SetLinearDamping(0.3);
+    newCharm.body.SetAngularDamping(0.2);
     newCharm.loadAssets().then(function(){
         this.charmList.push(newCharm);
     }.bind(this));
@@ -103,7 +105,8 @@ MTOItem.prototype.render = function() {
     if (this.baseChain) {
         this.baseChain.eachAnchor(function(anchor, isParent) {
             var o = anchor.getTransformedOffset();
-            this.wrappedCanvas.drawCircle(o.x, o.y, anchorDrawRadius, 'black');
+            var style = anchor.isOverlapped ? 'green' : 'black';
+            this.wrappedCanvas.drawCircle(o.x, o.y, anchorDrawRadius, style);
         }.bind(this));
     }
 
@@ -323,7 +326,7 @@ MTOItem.prototype.handleMousemove = function(evt) {
     this.mousePos = this.wrappedCanvas.getTransformedCoords(evt.clientX, evt.clientY);
 
     // committing short circuited while broken
-    if (false && this.draggingCharm) {
+    if (this.draggingCharm) {
 
         // clear all anchor overlap statuses
         this.iterateCharms(function(charm) {
@@ -334,10 +337,16 @@ MTOItem.prototype.handleMousemove = function(evt) {
 
         // set the affected anchor statuses to overlapped
         var collisions = this.findAnchorCollisions(2*anchorSnapRadius);
+        var closest = null;
+        var closestDist = Infinity;
         collisions.map(function(hitReport) {
-            hitReport.selectionAnchor.isOverlapped = true;
-            hitReport.hangingAnchor.isOverlapped = true;
+            if (!closest || hitReport.separation < closestDist) {
+                closest = hitReport;
+                closestDist = hitReport.separation;
+            }
         });
+        closest.selectionAnchor.isOverlapped = true;
+        closest.hangingAnchor.isOverlapped = true;
     }
 };
 
