@@ -118,7 +118,7 @@ function addNewCharm(key) {
 }
 
 function deleteSelectedCharm() {
-    item.deleteCharm();
+    item.deleteSelectedCharm();
 }
 
 module.exports = { main, writeDebugInfo, addNewCharm, deleteSelectedCharm, toggleBaseChain };

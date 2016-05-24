@@ -68,7 +68,7 @@ MTOItem.prototype.addCharm = function(newCharmSpec) {
     }.bind(this));
 };
 
-MTOItem.prototype.deleteCharm = function() {
+MTOItem.prototype.deleteSelectedCharm = function() {
     if (this.selectedCharm) {
         this.physics.world.DestroyBody( this.selectedCharm.body );
 
@@ -80,6 +80,23 @@ MTOItem.prototype.deleteCharm = function() {
         }.bind(this));
 
         if (deleteIndex > -1) {
+            var deletion = this.charmList[deleteIndex];
+            if (false) { // this code causes issues
+                deletion.eachAnchor(function(anchor) {
+                    var attached = anchor.attachedAnchor;
+                    if (attached) {
+                        debugger;
+                        attached.attachedAnchor = null;
+                        if (anchor.ownerCharm == attached.ownerCharm.parentAnchor) {
+                            attached.ownerCharm.parentAnchor = null;
+                        }
+                        anchor.attachedAnchor = null;
+                        attached.isOverlapped = false;
+                        anchor.isOverlapped = false;
+                        this.physics.world.DestroyJoint(anchor.joint);
+                    }
+                }.bind(this));
+            }
             this.charmList.splice(deleteIndex, 1);
         }
         this.selectedCharm = null;
