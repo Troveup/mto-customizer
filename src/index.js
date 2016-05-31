@@ -2,6 +2,7 @@
 //var Box2D = require("box2d");
 var WrappedCanvas = require("./wrapped-canvas.js");
 var MTOItem = require("./mto-item.js");
+var CharmDrawer = require("./charm-drawer.js");
 
 var necklaceOptions = [
     {
@@ -121,5 +122,24 @@ function deleteSelectedCharm() {
     item.deleteSelectedCharm();
 }
 
-module.exports = { main, writeDebugInfo, addNewCharm, deleteSelectedCharm, toggleBaseChain };
+function testDrawer(root) {
+    var drawer = new CharmDrawer(root);
+    drawer.defineCategory('Chains');
+    drawer.addCategoryEntry('Chains', charmTypeSpecs['debug-link']);
+
+    drawer.defineCategory('Charms');
+    drawer.addCategoryEntry('Charms', charmTypeSpecs['debug-link']);
+    drawer.addCategoryEntry('Charms', charmTypeSpecs['link']);
+    drawer.addCategoryEntry('Charms', charmTypeSpecs['splitter']);
+
+}
+
+module.exports = {
+    main,
+    writeDebugInfo,
+    addNewCharm,
+    deleteSelectedCharm,
+    toggleBaseChain,
+    testDrawer
+};
 

@@ -7,6 +7,24 @@
     #canvas {
         border: 1px solid black;
     }
+    .categoryHeader {
+        border: 1px solid red;
+    }
+    .categoryCell {
+        box-sizing: border-box;
+        border: 1px solid green;
+        width: 100px;
+        height: 100px;
+        float: left;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+    .group:after {
+        content: "";
+        display: table;
+        clear: both;
+    }
   </style>
 </head>
 <body>
@@ -17,6 +35,8 @@
     <button onclick="MTO.deleteSelectedCharm();"> Deleted Selected </button>
     <button onclick="MTO.toggleBaseChain();"> Switch Base Chain </button>
 
+    <div id="drawerTest"></div>
+
     <div id="logMessages"></div>
 
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r73/three.js"></script>
@@ -24,6 +44,8 @@
     <script type="text/javascript" src="/assets/MTO.js"></script>
     <script type="text/javascript">
         MTO.main();
+        var drawerTestElem = document.getElementById('drawerTest');
+        MTO.testDrawer(drawerTestElem);
     </script>
     <h3>Known Issues</h3>
     <p>Don't delete charms that are connected to other charms</p>
