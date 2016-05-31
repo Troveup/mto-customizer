@@ -6,6 +6,7 @@ var CharmDrawer = require("./charm-drawer.js");
 
 var necklaceOptions = [
     {
+        key: 'Single',
         imgURL: "/demo-chain.png",
         position: new THREE.Vector2(0, 25),
         width: 60,
@@ -15,6 +16,7 @@ var necklaceOptions = [
         ]
     },
     {
+        key: 'Double',
         imgURL: "/demo-chain.png",
         position: new THREE.Vector2(0, 25),
         width: 60,
@@ -31,8 +33,9 @@ var DEG_TO_RAD = Math.PI / 180;
 var linkWidth = 112 / 60;
 var linkHeight = 350 / 60;
 var anchorOffsetDist = 2.3;
-var charmTypeSpecs = {
-    'debug-link': {
+var charmTypeSpecs = [
+    {
+        key: 'debug-link',
         imgURL: "/directed-charm-link.png",
         position: new THREE.Vector2(0, 0),
         width: linkWidth,
@@ -42,7 +45,8 @@ var charmTypeSpecs = {
             { offset: new THREE.Vector2(0, -anchorOffsetDist) }
         ]
     },
-    'link': {
+    {
+        key: 'link',
         imgURL: "/charm-link.png",
         position: new THREE.Vector2(0, 0),
         width: linkWidth,
@@ -52,7 +56,8 @@ var charmTypeSpecs = {
             { offset: new THREE.Vector2(0, -anchorOffsetDist) }
         ]
     },
-    'splitter': {
+    {
+        key: 'splitter',
         imgURL: "/charm-link.png",
         position: new THREE.Vector2(0, 0),
         width: linkWidth,
@@ -64,7 +69,7 @@ var charmTypeSpecs = {
             { offset: new THREE.Vector2(0.75, -2) }
         ]
     }
-};
+];
 
 var item;
 var dt, currTime, lastTime = Date.now();
@@ -114,8 +119,8 @@ function writeDebugInfo(root, secondsDelay) {
 }
 
 // add new charm definitions here
-function addNewCharm(key) {
-    item.addCharm(charmTypeSpecs[key]);
+function addNewCharm(index) {
+    item.addCharm(charmTypeSpecs[index]);
 }
 
 function deleteSelectedCharm() {
@@ -124,14 +129,16 @@ function deleteSelectedCharm() {
 
 function testDrawer(root) {
     var drawer = new CharmDrawer(root);
+
     drawer.defineCategory('Chains');
-    drawer.addCategoryEntry('Chains', charmTypeSpecs['debug-link']);
+    necklaceOptions.map(function(chainDef) {
+        drawer.addCategoryEntry('Chains', chainDef);
+    });
 
     drawer.defineCategory('Charms');
-    drawer.addCategoryEntry('Charms', charmTypeSpecs['debug-link']);
-    drawer.addCategoryEntry('Charms', charmTypeSpecs['link']);
-    drawer.addCategoryEntry('Charms', charmTypeSpecs['splitter']);
-
+    charmTypeSpecs.map(function(charmDef) {
+        drawer.addCategoryEntry('Charms', charmDef);
+    });
 }
 
 module.exports = {

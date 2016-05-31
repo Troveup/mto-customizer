@@ -17,15 +17,15 @@ CharmDrawer.prototype.defineCategory = function(categoryName) {
     this.containers[categoryName] = cat;
 };
 
+console.warn("TODO: add anchors to drawer charms");
 CharmDrawer.prototype.addCategoryEntry = function(categoryName, charmDef) {
     var cat = this.containers[categoryName];
 
     var cell = document.createElement('div');
-    // FIXME: need to add the key
     cell.setAttribute('data-type', categoryName);
+    cell.setAttribute('data-key', charmDef.key);
     cell.className = "categoryCell clearFix";
     cell.style.backgroundImage = `url(${charmDef.imgURL})`;
-    //cell.innerHTML = `<img src="${charmDef.imgURL}" />`;
 
     cat.appendChild(cell);
     console.log(charmDef);
