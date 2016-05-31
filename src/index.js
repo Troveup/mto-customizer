@@ -24,18 +24,12 @@ function loop() {
     item.render();
 }
 
-var activeChainIndex = 0;
-function toggleBaseChain() {
-    var currentChainSpec = necklaceOptions[activeChainIndex];
-    item.setBaseChain(currentChainSpec);
-    activeChainIndex = (activeChainIndex + 1) % necklaceOptions.length;
-}
 
 var testCanvas;
 function main() {
     item = new MTOItem('canvas');
 
-    //toggleBaseChain();
+    item.setBaseChain(Gateway['chain']['double']);
     canvas.addEventListener('mousedown', item.handleMousedown.bind(item));
     canvas.addEventListener('mouseup', item.handleMouseup.bind(item));
     canvas.addEventListener('mousemove', item.handleMousemove.bind(item), false);

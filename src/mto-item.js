@@ -237,6 +237,7 @@ MTOItem.prototype.getClosestCharmClicked = function(mousePos) {
     var closestCharm = {
         hit: false
     };
+
     this.charmList.map(function(charm) {
         var result = charm.hitCheck(mousePos);
         if (result.hit) {
