@@ -17,7 +17,7 @@ CharmDrawer.prototype.defineCategory = function(opts) {
     this.containers[opts.type] = cat;
 };
 
-console.warn("TODO: render anchors on drawer charms");
+//console.warn("TODO: render anchors on drawer charms");
 CharmDrawer.prototype.addTypeEntry = function(categoryType, charmDef) {
     var cat = this.containers[categoryType];
 
@@ -39,7 +39,7 @@ CharmDrawer.prototype.registerTypeHandler = function(categoryType, fn) {
     for (var i = 0; i < cells.length; i++) {
         cells[i].addEventListener('click', function(evt) {
             var key = evt.target.getAttribute('data-key');
-            fn.call(null, key);
+            fn.call(null, categoryType, key);
         });
     }
 };

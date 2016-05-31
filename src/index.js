@@ -3,73 +3,9 @@
 var WrappedCanvas = require("./wrapped-canvas.js");
 var MTOItem = require("./mto-item.js");
 var CharmDrawer = require("./charm-drawer.js");
-
-var necklaceOptions = [
-    {
-        key: 'Single',
-        imgURL: "/demo-chain.png",
-        position: new THREE.Vector2(0, 25),
-        width: 60,
-        height: 80,
-        anchors: [
-            { offset: new THREE.Vector2(0.75, -15.5) }
-        ]
-    },
-    {
-        key: 'Double',
-        imgURL: "/demo-chain.png",
-        position: new THREE.Vector2(0, 25),
-        width: 60,
-        height: 80,
-        anchors: [
-            { offset: new THREE.Vector2(-2, -15.5) },
-            { offset: new THREE.Vector2(2, -15.5) }
-        ]
-    }
-];
+var Gateway = require('./hardcoded-gateway.js');
 
 var DEG_TO_RAD = Math.PI / 180;
-
-var linkWidth = 112 / 60;
-var linkHeight = 350 / 60;
-var anchorOffsetDist = 2.3;
-var charmTypeSpecs = [
-    {
-        key: 'debug-link',
-        imgURL: "/directed-charm-link.png",
-        position: new THREE.Vector2(0, 0),
-        width: linkWidth,
-        height: linkHeight,
-        anchors: [
-            { offset: new THREE.Vector2(0, anchorOffsetDist) },
-            { offset: new THREE.Vector2(0, -anchorOffsetDist) }
-        ]
-    },
-    {
-        key: 'link',
-        imgURL: "/charm-link.png",
-        position: new THREE.Vector2(0, 0),
-        width: linkWidth,
-        height: linkHeight,
-        anchors: [
-            { offset: new THREE.Vector2(0, anchorOffsetDist) },
-            { offset: new THREE.Vector2(0, -anchorOffsetDist) }
-        ]
-    },
-    {
-        key: 'splitter',
-        imgURL: "/charm-link.png",
-        position: new THREE.Vector2(0, 0),
-        width: linkWidth,
-        height: linkHeight,
-        anchors: [
-            { offset: new THREE.Vector2(-0.75, 0) },
-            { offset: new THREE.Vector2(0.75, 2) },
-            { offset: new THREE.Vector2(0.75, 0) },
-            { offset: new THREE.Vector2(0.75, -2) }
-        ]
-    }
-];
 
 var item;
 var dt, currTime, lastTime = Date.now();
@@ -99,7 +35,7 @@ var testCanvas;
 function main() {
     item = new MTOItem('canvas');
 
-    toggleBaseChain();
+    //toggleBaseChain();
     canvas.addEventListener('mousedown', item.handleMousedown.bind(item));
     canvas.addEventListener('mouseup', item.handleMouseup.bind(item));
     canvas.addEventListener('mousemove', item.handleMousemove.bind(item), false);
@@ -118,16 +54,9 @@ function writeDebugInfo(root, secondsDelay) {
     }, secondsDelay*1000);
 }
 
-// add new charm definitions here
-function addNewCharm(index) {
-    item.addCharm(charmTypeSpecs[index]);
-}
-
 function deleteSelectedCharm() {
     item.deleteSelectedCharm();
 }
-
-// charm def 
 
 function testDrawer(root) {
     var drawer = new CharmDrawer(root);
@@ -136,33 +65,34 @@ function testDrawer(root) {
         title: 'Chains',
         type: 'chain'
     });
-    necklaceOptions.map(function(chainDef) {
-        drawer.addTypeEntry('chain', chainDef);
+
+    var chainHash = Gateway['chain'];
+    Object.keys(chainHash).map(function(chainKey) {
+        drawer.addTypeEntry('chain', chainHash[chainKey]);
+    });
+
+    drawer.registerTypeHandler('chain', function(type, key) {
+        item.setBaseChain(Gateway[type][key]);
     });
 
     drawer.defineCategory({
         title: 'Charms',
         type: 'charm'
     });
-    charmTypeSpecs.map(function(charmDef) {
-        drawer.addTypeEntry('charm', charmDef);
-    });
 
-    drawer.registerTypeHandler('chain', function(key) {
-        console.log(`clicked chain ${key}`);
+    var charmHash = Gateway['charm'];
+    Object.keys(charmHash).map(function(charmKey) {
+        drawer.addTypeEntry('charm', charmHash[charmKey]);
     });
-
-    drawer.registerTypeHandler('charm', function(key) {
-        console.log(`clicked charm ${key}`);
+    drawer.registerTypeHandler('charm', function(type, key) {
+        item.addCharm(Gateway[type][key]);
     });
 }
 
 module.exports = {
     main,
     writeDebugInfo,
-    addNewCharm,
     deleteSelectedCharm,
-    toggleBaseChain,
     testDrawer
 };
 
