@@ -127,17 +127,33 @@ function deleteSelectedCharm() {
     item.deleteSelectedCharm();
 }
 
+// charm def 
+
 function testDrawer(root) {
     var drawer = new CharmDrawer(root);
 
-    drawer.defineCategory('Chains');
+    drawer.defineCategory({
+        title: 'Chains',
+        type: 'chain'
+    });
     necklaceOptions.map(function(chainDef) {
-        drawer.addCategoryEntry('Chains', chainDef);
+        drawer.addTypeEntry('chain', chainDef);
     });
 
-    drawer.defineCategory('Charms');
+    drawer.defineCategory({
+        title: 'Charms',
+        type: 'charm'
+    });
     charmTypeSpecs.map(function(charmDef) {
-        drawer.addCategoryEntry('Charms', charmDef);
+        drawer.addTypeEntry('charm', charmDef);
+    });
+
+    drawer.registerTypeHandler('chain', function(key) {
+        console.log(`clicked chain ${key}`);
+    });
+
+    drawer.registerTypeHandler('charm', function(key) {
+        console.log(`clicked charm ${key}`);
     });
 }
 
