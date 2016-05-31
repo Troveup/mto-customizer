@@ -3,7 +3,8 @@
 var WrappedCanvas = require("./wrapped-canvas.js");
 var MTOItem = require("./mto-item.js");
 var CharmDrawer = require("./charm-drawer.js");
-var Gateway = require('./hardcoded-gateway.js');
+var Gateway = require('./gateway.js');
+var hardCodedGateway = require('./hardcoded-gateway.js');
 
 var DEG_TO_RAD = Math.PI / 180;
 
@@ -24,12 +25,18 @@ function loop() {
     item.render();
 }
 
+// need to figure out a good way to populate this, likely from the DB
+var cloudReferences = [];
 
 var testCanvas;
 function main() {
     item = new MTOItem('canvas');
 
-    item.setBaseChain(Gateway['chain']['double']);
+    cloudReferences.map(function(cloudRef) {
+        return Gateway.load(cloudRef);
+    });
+
+    item.setBaseChain(hardCodedGateway['chain']['double']);
     canvas.addEventListener('mousedown', item.handleMousedown.bind(item));
     canvas.addEventListener('mouseup', item.handleMouseup.bind(item));
     canvas.addEventListener('mousemove', item.handleMousemove.bind(item), false);
@@ -52,21 +59,20 @@ function deleteSelectedCharm() {
     item.deleteSelectedCharm();
 }
 
-function testDrawer(root) {
+function buildDrawer(root, gate) {
     var drawer = new CharmDrawer(root);
-
     drawer.defineCategory({
         title: 'Chains',
         type: 'chain'
     });
 
-    var chainHash = Gateway['chain'];
+    var chainHash = hardCodedGateway['chain'];
     Object.keys(chainHash).map(function(chainKey) {
         drawer.addTypeEntry('chain', chainHash[chainKey]);
     });
 
     drawer.registerTypeHandler('chain', function(type, key) {
-        item.setBaseChain(Gateway[type][key]);
+        item.setBaseChain(hardCodedGateway[type][key]);
     });
 
     drawer.defineCategory({
@@ -74,12 +80,12 @@ function testDrawer(root) {
         type: 'charm'
     });
 
-    var charmHash = Gateway['charm'];
+    var charmHash = hardCodedGateway['charm'];
     Object.keys(charmHash).map(function(charmKey) {
         drawer.addTypeEntry('charm', charmHash[charmKey]);
     });
     drawer.registerTypeHandler('charm', function(type, key) {
-        item.addCharm(Gateway[type][key]);
+        item.addCharm(hardCodedGateway[type][key]);
     });
 }
 
@@ -87,6 +93,6 @@ module.exports = {
     main,
     writeDebugInfo,
     deleteSelectedCharm,
-    testDrawer
+    buildDrawer
 };
 

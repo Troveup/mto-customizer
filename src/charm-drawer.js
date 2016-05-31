@@ -2,11 +2,13 @@
 function CharmDrawer(rootElem) {
     rootElem.className = "charmDrawerRoot";
     rootElem.style.width = "200px";
+    rootElem.style.border = '1px solid black';
     this.containers = {
         root: rootElem
     };
 }
 
+// TODO: define max height and other parameters
 CharmDrawer.prototype.defineCategory = function(opts) {
     var cat = document.createElement('div');
     cat.setAttribute('data-type', opts.type);
@@ -43,5 +45,10 @@ CharmDrawer.prototype.registerTypeHandler = function(categoryType, fn) {
         });
     }
 };
+
+// TODO: add and remove trove pink border around selected elements
+CharmDrawer.prototype.highlightEntry = function(categoryType, key) { };
+CharmDrawer.prototype.clearHighlight = function(categoryType) { };
+
 
 module.exports = CharmDrawer;
