@@ -10,10 +10,10 @@ Gateway.prototype.load = function(ref) {
     var publicURL = `https://storage.googleapis.com/${ref.bucket}/gateway/${ref.type}/${ref.key}/${ref.hash}.json`;
 
     var contents = null;
-    //fetch(publicURL)
-        //.then(function (response) {
-            //contents = response.json();
-        //});
+    fetch(publicURL)
+        .then(function (response) {
+            contents = response.json();
+        });
 
     var typeHash = this.cache[ref.type];
     if (!typeHash) {

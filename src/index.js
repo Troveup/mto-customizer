@@ -30,16 +30,9 @@ var cloudReferences = [
     {
         bucket: 'troveup-dev-private',
         type: 'charm',
-        key: 'simple-link',
+        key: 'dev-simple-link',
         version: 1,
-        hash: "018e2be0d576c0dfeb6dd66ad9fb59390560243a"
-    },
-    {
-        bucket: 'troveup-dev-private',
-        type: 'charm',
-        key: 'debug-link',
-        version: 1,
-        hash: "12345be0d576c0dfeb6dd66ad9fb59390560243a"
+        hash: "06610768D189CCCC4C1874B8576DA4A9"
     }
 ];
 

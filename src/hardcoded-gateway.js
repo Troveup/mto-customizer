@@ -1,8 +1,4 @@
 
-var linkWidth = 112 / 60;
-var linkHeight = 350 / 60;
-var anchorOffsetDist = 2.3;
-
 module.exports = {
     chain: {
         'single': {
@@ -23,28 +19,28 @@ module.exports = {
         }
     },
     charm: {
-        'debug-link': {
+        'dev-simple-link': {
             type: 'charm',
-            key: 'debug-link',
-            imgURL: "/directed-charm-link.png",
-            width: linkWidth,
-            height: linkHeight,
-            anchors: [ 0, anchorOffsetDist, 0, -anchorOffsetDist ]
-        },
-        'link': {
-            type: 'charm',
-            key: 'link',
+            key: 'dev-simple-link',
             imgURL: "/charm-link.png",
-            width: linkWidth,
-            height: linkHeight,
-            anchors: [ 0, anchorOffsetDist, 0, -anchorOffsetDist ]
+            width: 1.866666666666667,
+            height: 5.833333333333333,
+            anchors: [ 0, 2.3, 0, -2.3 ]
+        },
+        'dev-directed-link': {
+            type: 'charm',
+            key: 'dev-directed-link',
+            imgURL: "/directed-charm-link.png",
+            width: 1.866666666666667,
+            height: 5.833333333333333,
+            anchors: [ 0, 2.3, 0, -2.3 ]
         },
         'splitter': {
             type: 'charm',
             key: 'splitter',
             imgURL: "/charm-link.png",
-            width: linkWidth,
-            height: linkHeight,
+            width: 1.866666666666667,
+            height: 5.833333333333333,
             anchors: [ -0.75, 0, 0.75, 2, 0.75, 0, 0.75, -2 ]
         }
     }
