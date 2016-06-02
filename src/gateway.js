@@ -9,8 +9,11 @@ console.log("woo woo got here");
 Gateway.prototype.load = function(ref) {
     var publicURL = `https://storage.googleapis.com/${ref.bucket}/gateway/${ref.type}/${ref.key}/${ref.hash}.json`;
 
-    // TODO: actually fetch contents
-    var contents = publicURL;
+    var contents = null;
+    //fetch(publicURL)
+        //.then(function (response) {
+            //contents = response.json();
+        //});
 
     var typeHash = this.cache[ref.type];
     if (!typeHash) {

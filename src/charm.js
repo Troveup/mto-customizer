@@ -12,20 +12,18 @@ function createGUID() {
 function Charm(spec) {
     this.key = createGUID(); // think of better method...
     this.imgURL = spec.imgURL;
-    this.pos = spec.position.clone();
+    this.pos = new THREE.Vector2();
     this.width = spec.width;
     this.height = spec.height;
     this.angleInRadians = spec.rotation || 0;
 
     // invariant: `parentAnchor` should be cleared if not connecting to a parent charm anchor
     this.parentAnchor = null;
-
-    this.anchors = Object.create(null);
-    var anchorSpecs = spec.anchors || [];
-    anchorSpecs.map(function(anchorSpec) {
-        anchorSpec.key = anchorSpec.offset.x + "," + anchorSpec.offset.y;
-        this.anchors[anchorSpec.key] = new Anchor(anchorSpec, this);
-    }.bind(this));
+    this.anchors = [];
+    for (var i = 0, sentinel = spec.anchors.length - 1; i < sentinel; i += 2) {
+        var a = spec.anchors;
+        this.anchors.push( new Anchor( a[i], a[i+1], this) );
+    } 
 
     this.body = null; // set by containing item
     this.status = 'normal';
@@ -108,8 +106,7 @@ Charm.prototype.hitCheck = function(checkPos) {
 // pass callback of form
 // fn(anchor, isParent)
 Charm.prototype.eachAnchor = function(fn) {
-    Object.keys(this.anchors).map(function(anchorKey) {
-        var anchor = this.anchors[anchorKey];
+    this.anchors.map(function(anchor, i) {
         fn(anchor, anchor == this.parentAnchor);
     }.bind(this));
 };

@@ -1,8 +1,7 @@
 
-function Anchor(spec, owner) {
-    this.key = spec.key;
+function Anchor(x, y, owner) {
     this.ownerCharm = owner;
-    this.offset = spec.offset; // the offset of this anchor from the charm's origin at rotation 0
+    this.offset = new THREE.Vector2(x, y); // the offset of this anchor from the charm's origin at rotation 0
     this.joint = null;
     this.attachedAnchor = null;
 }

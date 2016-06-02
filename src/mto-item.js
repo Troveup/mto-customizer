@@ -35,6 +35,9 @@ function MTOItem(canvasID, baseSpec, charmSpecList) {
     }
 }
 
+var CHAIN_X = 0;
+var CHAIN_Y = 25;
+
 MTOItem.prototype.setBaseChain = function(newCharmSpec) {
     if (this.baseChain) {
         this.baseChain.eachAnchor(function(anchor) {
@@ -52,6 +55,7 @@ MTOItem.prototype.setBaseChain = function(newCharmSpec) {
     }
 
     var b = new Charm(newCharmSpec);
+    b.pos.set( CHAIN_X, CHAIN_Y );
     b.body = this.physics.createBox( b.pos.x, b.pos.y, b.angleInRadians, 1, 1, 'static');
     b.loadAssets().then(function() {
         this.baseChain = b;
@@ -60,7 +64,7 @@ MTOItem.prototype.setBaseChain = function(newCharmSpec) {
 
 MTOItem.prototype.addCharm = function(newCharmSpec) {
     var newCharm = new Charm(newCharmSpec);
-    newCharm.body = this.physics.createBox(newCharm.pos.x, newCharm.pos.y, newCharm.angleInRadians, newCharm.width, newCharm.height, 'dynamic');
+    newCharm.body = this.physics.createBox( 0, 0, newCharm.angleInRadians, newCharm.width, newCharm.height, 'dynamic');
     newCharm.body.SetLinearDamping(0.3);
     newCharm.body.SetAngularDamping(0.2);
     newCharm.loadAssets().then(function(){
