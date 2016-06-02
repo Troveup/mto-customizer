@@ -26,14 +26,30 @@ function loop() {
 }
 
 // need to figure out a good way to populate this, likely from the DB
-var cloudReferences = [];
+var cloudReferences = [
+    {
+        bucket: 'troveup-dev-private',
+        type: 'charm',
+        key: 'simple-link',
+        version: 1,
+        hash: "018e2be0d576c0dfeb6dd66ad9fb59390560243a"
+    },
+    {
+        bucket: 'troveup-dev-private',
+        type: 'charm',
+        key: 'debug-link',
+        version: 1,
+        hash: "12345be0d576c0dfeb6dd66ad9fb59390560243a"
+    }
+];
 
 var testCanvas;
+var gate = new Gateway();
 function main() {
     item = new MTOItem('canvas');
 
     cloudReferences.map(function(cloudRef) {
-        return Gateway.load(cloudRef);
+        gate.load(cloudRef);
     });
 
     item.setBaseChain(hardCodedGateway['chain']['double']);
