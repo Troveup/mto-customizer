@@ -37,13 +37,13 @@ var cloudReferences = [
 ];
 
 var testCanvas;
-var gate = new Gateway();
+var gate = new Gateway(); // TODO: figure out cors issue to resume testing
 function main() {
     item = new MTOItem('canvas');
 
-    cloudReferences.map(function(cloudRef) {
-        gate.load(cloudRef);
-    });
+    //cloudReferences.map(function(cloudRef) {
+        //gate.load(cloudRef);
+    //});
 
     item.setBaseChain(hardCodedGateway['chain']['double']);
     canvas.addEventListener('mousedown', item.handleMousedown.bind(item));

@@ -4,6 +4,13 @@
   <meta charset="UTF-8">
   <title>Document</title>
   <style>
+    .canvasWrapper {
+        float: left;
+    }
+    .drawerWrapper {
+        float: left;
+    }
+
     #canvas {
         border: 1px solid black;
     }
@@ -24,16 +31,16 @@
   </style>
 </head>
 <body>
-    <canvas width="600" height="600" id="canvas"></canvas>
-    <!--<button onclick="MTO.addNewCharm(0);"> Add Debug Link Charm </button>-->
-    <!--<button onclick="MTO.addNewCharm(1);"> Add Link Charm </button>-->
-    <!--<button onclick="MTO.addNewCharm(2);"> Add Splitter Charm </button>-->
+    <div class="group">
+        <div class="canvasWrapper">
+            <canvas width="600" height="600" id="canvas"></canvas>
+        </div>
+        <div class="drawerWrapper">
+            <div id="drawerTest"></div>
+        </div>
+    </div>
+    
     <button onclick="MTO.deleteSelectedCharm();"> Deleted Selected </button>
-    <!--<button onclick="MTO.toggleBaseChain();"> Switch Base Chain </button>-->
-
-    <div id="drawerTest"></div>
-
-    <div id="logMessages"></div>
 
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r73/three.js"></script>
     <script type="text/javascript" src="/box2d_v2.3.1_min.js"></script>
