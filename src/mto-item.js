@@ -300,7 +300,8 @@ MTOItem.prototype.attachAnchors = function(anchorA, anchorB) {
     anchorB.attachedAnchor = anchorA;
 };
 
-MTOItem.prototype.handleMousedown = function(evt) {
+// TODO: more semantic identifer, index level should define "mousedown" behavior
+MTOItem.prototype.charmClickQuery = function(evt) {
     var mousePos = this.wrappedCanvas.getTransformedCoords(evt.clientX, evt.clientY);
     var clickResult = this.getClosestCharmClicked(mousePos);
     if (clickResult.hit) {
@@ -311,9 +312,11 @@ MTOItem.prototype.handleMousedown = function(evt) {
         this.detachParentCharm(clickResult.charm);
         this.cacheLiveAnchors();
         this.selectedCharm.halt();
+        return true;
     } else {
         this.selectedCharm = null;
         //console.warn("TODO: could check gravity here?");
+        return false;
     }
 };
 

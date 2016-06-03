@@ -52,7 +52,13 @@ function main() {
     //});
 
     item.setBaseChain(hardCodedGateway['chain']['double']);
-    canvas.addEventListener('mousedown', item.handleMousedown.bind(item));
+    canvas.addEventListener('mousedown', function(evt) {
+        var hit = item.charmClickQuery(evt);
+        if (hit) {
+            // should be triggered by clicking charm
+            overlay.displayInstance(item.selectedCharm);
+        }
+    });
     canvas.addEventListener('mouseup', item.handleMouseup.bind(item));
     canvas.addEventListener('mousemove', item.handleMousemove.bind(item), false);
     loop();
@@ -106,6 +112,10 @@ function buildDrawer(root, gate) {
 
     overlay.registerDefHandler(function(overlayCharmDef) {
         item.addCharm(overlayCharmDef);
+    });
+    overlay.registerInstanceHandler(function(charm) {
+        //item.addCharm(overlayCharmDef);
+        item.deleteSelectedCharm();
     });
 }
 

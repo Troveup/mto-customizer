@@ -15,40 +15,54 @@ Overlay.prototype.buildHTML = function() {
 };
 
 Overlay.prototype.handleGenericButtonClick = function() {
+
     if (this.storedDefinition) {
-        this.executedDefinitionHandler();
+        this.defHandler.call(null, this.storedDefinition);
+    }
+
+    if (this.storedInstance) {
+        this.instanceHandler.call(null, this.storedInstance);
+        this.hide();
     }
 };
 
 Overlay.prototype.displayDefinition = function(charmDef) {
     this.storedDefinition = charmDef;
+    this.storedInstance = null;
+
     var imgDiv = this.root.querySelector('.categoryCell');
     imgDiv.style.margin = '10px';
     imgDiv.style.width = '80px';
     imgDiv.style.height = '80px';
     imgDiv.style.backgroundImage = `url(${charmDef.imgURL})`;
 
+    var button = this.root.querySelector('button');
+    button.innerHTML = 'Add Charm';
+
     this.root.style.display = 'block';
-};
-
-Overlay.prototype.handleButton = function(fn) {
-    if (this.storedDefinition) {
-        fn.call(null, this.storedDefinition);
-    }
-};
-
-Overlay.prototype.executedDefinitionHandler = function() {
-    this.defHandler.call(null, this.storedDefinition);
-};
-
-Overlay.prototype.registerDefHandler = function(fn) {
-    this.defHandler = fn;
 };
 
 // may need to modify this so definition is also passed, depends on what is
 // needed for rendering overlay details. if just image and charm ref needed
 // for deletion this is fine
 Overlay.prototype.displayInstance = function(charm) {
+    this.storedDefinition = null;
+    this.storedInstance = charm;
+
+    var imgDiv = this.root.querySelector('.categoryCell');
+    imgDiv.style.backgroundImage = `url(${charm.imgURL})`;
+
+    var button = this.root.querySelector('button');
+    button.innerHTML = 'Remove Charm';
+
+    this.root.style.display = 'block';
+};
+
+Overlay.prototype.registerDefHandler = function(fn) {
+    this.defHandler = fn;
+};
+Overlay.prototype.registerInstanceHandler = function(fn) {
+    this.instanceHandler = fn;
 };
 
 Overlay.prototype.hide = function() {
