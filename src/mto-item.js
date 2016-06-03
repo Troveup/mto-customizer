@@ -313,7 +313,7 @@ MTOItem.prototype.handleMousedown = function(evt) {
         this.selectedCharm.halt();
     } else {
         this.selectedCharm = null;
-        console.warn("TODO: could check gravity here?");
+        //console.warn("TODO: could check gravity here?");
     }
 };
 

@@ -4,6 +4,8 @@ var WrappedCanvas = require("./wrapped-canvas.js");
 var MTOItem = require("./mto-item.js");
 var CharmDrawer = require("./charm-drawer.js");
 var Gateway = require('./gateway.js');
+var Overlay = require('./overlay.js');
+
 var hardCodedGateway = require('./hardcoded-gateway.js');
 
 var DEG_TO_RAD = Math.PI / 180;
@@ -37,9 +39,13 @@ var cloudReferences = [
 ];
 
 var testCanvas;
+var overlayContainer = document.getElementById('overlayContainer');
 var gate = new Gateway(); // TODO: figure out cors issue to resume testing
+var overlay = new Overlay(overlayContainer);
+
 function main() {
     item = new MTOItem('canvas');
+    overlay.buildHTML();
 
     //cloudReferences.map(function(cloudRef) {
         //gate.load(cloudRef);
@@ -94,7 +100,12 @@ function buildDrawer(root, gate) {
         drawer.addTypeEntry('charm', charmHash[charmKey]);
     });
     drawer.registerTypeHandler('charm', function(type, key) {
-        item.addCharm(hardCodedGateway[type][key]);
+        var def = hardCodedGateway[type][key];
+        overlay.displayDefinition(def);
+    });
+
+    overlay.registerDefHandler(function(overlayCharmDef) {
+        item.addCharm(overlayCharmDef);
     });
 }
 

@@ -6,9 +6,21 @@
   <style>
     .canvasWrapper {
         float: left;
+        position: relative;
     }
     .drawerWrapper {
         float: left;
+    }
+    #overlayContainer {
+        position: absolute;
+        width: 100px;
+        background-color: red;
+        top: 0;
+        right: 0;
+    }
+    #overlayContainer button {
+        display: block;
+        margin: 0 auto 10px;
     }
 
     #canvas {
@@ -34,6 +46,7 @@
     <div class="group">
         <div class="canvasWrapper">
             <canvas width="600" height="600" id="canvas"></canvas>
+            <div id="overlayContainer"></div>
         </div>
         <div class="drawerWrapper">
             <div id="drawerTest"></div>
