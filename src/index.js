@@ -37,13 +37,15 @@ function main(opts) {
     overlay.buildHTML();
 
     var chainPromise = null;
-    debugger;
     var promiseList = opts.referenceList.map(function(cloudRef) {
         var loadPromise = gate.load(cloudRef);
         if (cloudRef.refType == 'chain' && !chainPromise) {
             chainPromise = loadPromise;
         }
+        return loadPromise;
     });
+    console.log("promiseList");
+    console.log(promiseList);
 
     // TODO: use promises to wait until loading is done before setting initial chain
     if (chainPromise) {
@@ -108,15 +110,18 @@ function buildDrawer(root, gate) {
         type: 'charm'
     });
 
-    gate.forTypeEach('charm', function(charmDef) {
-        debugger;
-        drawer.addTypeEntry('charm', charmDef);
+    gate.forTypeEach('charm', function(charmPromise) {
+        charmPromise.then(function(charmDef){
+            drawer.addTypeEntry('charm', charmDef);
+        });
     });
 
     //var charmHash = hardCodedGateway['charm'];
     //Object.keys(charmHash).map(function(charmKey) {
         //drawer.addTypeEntry('charm', charmHash[charmKey]);
     //});
+
+    debugger;
     drawer.registerTypeHandler('charm', function(type, key) {
         var def = gate.get(type, key);
         overlay.displayDefinition(def);

@@ -12,11 +12,10 @@ Gateway.prototype.load = function(ref) {
         typeHash = this.cache[ref.type] = {};
     }
 
-    console.log("about to fetch contents");
+    //console.log("about to fetch contents");
     return fetch(publicURL)
         .then(function (response) {
             typeHash[ref.key] = response.json();
-            console.log("setting data");
             return typeHash[ref.key];
         });
 };
