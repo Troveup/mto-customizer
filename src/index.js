@@ -27,17 +27,6 @@ function loop() {
     item.render();
 }
 
-// need to figure out a good way to populate this, likely from the DB
-var cloudReferences = [
-    {
-        bucket: 'troveup-dev-private',
-        type: 'charm',
-        key: 'dev-simple-link',
-        version: 1,
-        hash: "06610768D189CCCC4C1874B8576DA4A9"
-    }
-];
-
 var gate = new Gateway(); // TODO: figure out cors issue to resume testing
 var overlay;
 
@@ -46,11 +35,29 @@ function main(opts) {
 
     overlay = new Overlay(opts.overlayContainer);
     overlay.buildHTML();
-    //cloudReferences.map(function(cloudRef) {
-        //gate.load(cloudRef);
-    //});
 
-    item.setBaseChain(hardCodedGateway['chain']['double']);
+    var chainPromise = null;
+    debugger;
+    var promiseList = opts.referenceList.map(function(cloudRef) {
+        var loadPromise = gate.load(cloudRef);
+        if (cloudRef.refType == 'chain' && !chainPromise) {
+            chainPromise = loadPromise;
+        }
+    });
+
+    // TODO: use promises to wait until loading is done before setting initial chain
+    if (chainPromise) {
+        chainPromise.then(function(){
+            console.warn("figure out which chain has just been loaded, set it to base chain");
+            //item.setBaseChain(gate.get('chain', 'double'));
+        });
+    }
+
+    Promise.all(promiseList).then(function() {
+        if (opts.drawerContainer) {
+            buildDrawer(opts.drawerContainer, gate);
+        }
+    });
 
     canvas.addEventListener('mousedown', function(evt) {
         var hit = item.charmClickQuery(evt);
@@ -61,9 +68,6 @@ function main(opts) {
     canvas.addEventListener('mouseup', item.handleMouseup.bind(item));
     canvas.addEventListener('mousemove', item.handleMousemove.bind(item), false);
 
-    if (opts.drawerContainer) {
-        MTO.buildDrawer(opts.drawerContainer);
-    }
     loop();
 }
 
@@ -85,31 +89,36 @@ function deleteSelectedCharm() {
 
 function buildDrawer(root, gate) {
     var drawer = new CharmDrawer(root);
-    drawer.defineCategory({
-        title: 'Chains',
-        type: 'chain'
-    });
+    //drawer.defineCategory({
+        //title: 'Chains',
+        //type: 'chain'
+    //});
 
-    var chainHash = hardCodedGateway['chain'];
-    Object.keys(chainHash).map(function(chainKey) {
-        drawer.addTypeEntry('chain', chainHash[chainKey]);
-    });
+    //var chainHash = hardCodedGateway['chain'];
+    //Object.keys(chainHash).map(function(chainKey) {
+        //drawer.addTypeEntry('chain', chainHash[chainKey]);
+    //});
 
-    drawer.registerTypeHandler('chain', function(type, key) {
-        item.setBaseChain(hardCodedGateway[type][key]);
-    });
+    //drawer.registerTypeHandler('chain', function(type, key) {
+        //item.setBaseChain(hardCodedGateway[type][key]);
+    //});
 
     drawer.defineCategory({
         title: 'Charms',
         type: 'charm'
     });
 
-    var charmHash = hardCodedGateway['charm'];
-    Object.keys(charmHash).map(function(charmKey) {
-        drawer.addTypeEntry('charm', charmHash[charmKey]);
+    gate.forTypeEach('charm', function(charmDef) {
+        debugger;
+        drawer.addTypeEntry('charm', charmDef);
     });
+
+    //var charmHash = hardCodedGateway['charm'];
+    //Object.keys(charmHash).map(function(charmKey) {
+        //drawer.addTypeEntry('charm', charmHash[charmKey]);
+    //});
     drawer.registerTypeHandler('charm', function(type, key) {
-        var def = hardCodedGateway[type][key];
+        var def = gate.get(type, key);
         overlay.displayDefinition(def);
     });
 
@@ -125,7 +134,6 @@ function buildDrawer(root, gate) {
 module.exports = {
     main,
     writeDebugInfo,
-    deleteSelectedCharm,
-    buildDrawer
+    deleteSelectedCharm
 };
 

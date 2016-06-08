@@ -7,17 +7,25 @@ function Gateway() {
 Gateway.prototype.load = function(ref) {
     var publicURL = `https://storage.googleapis.com/${ref.bucket}/gateway/${ref.type}/${ref.key}/${ref.hash}.json`;
 
-    var contents = null;
-    fetch(publicURL)
-        .then(function (response) {
-            contents = response.json();
-        });
-
     var typeHash = this.cache[ref.type];
     if (!typeHash) {
         typeHash = this.cache[ref.type] = {};
     }
-    typeHash[ref.key] = contents;
+
+    console.log("about to fetch contents");
+    return fetch(publicURL)
+        .then(function (response) {
+            typeHash[ref.key] = response.json();
+            console.log("setting data");
+            return typeHash[ref.key];
+        });
+};
+
+Gateway.prototype.forTypeEach = function(type, fn) {
+    var typeHash = this.cache[type];
+    Object.keys(typeHash).map(function(hashKey) {
+        fn.call(null, typeHash[hashKey]);
+    });
 };
 
 Gateway.prototype.get = function(type, key) { // eventually version

@@ -57,7 +57,20 @@
     <script type="text/javascript" src="/box2d_v2.3.1_min.js"></script>
     <script type="text/javascript" src="/assets/MTO.js"></script>
     <script type="text/javascript">
+        // need to figure out a good way to populate this, likely from the DB
+        var cloudReferences = [
+            {
+                bucket: 'troveup-dev-private',
+                type: 'charm',
+                key: 'dev-simple-link',
+                version: 2, // 1,
+                hash: "5854463C046A4AAE1995876B6551534D" // "06610768D189CCCC4C1874B8576DA4A9"
+            }
+        ];
+        https://storage.googleapis.com/troveup-dev-private/gateway/charm/dev-simple-link/5854463C046A4AAE1995876B6551534D.json
+
         MTO.main({
+            referenceList: cloudReferences,
             canvas: document.getElementById('canvas'),
             overlayContainer: document.getElementById('overlayContainer'),
             drawerContainer: document.getElementById('drawerContainer')
