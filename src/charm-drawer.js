@@ -6,6 +6,7 @@ function CharmDrawer(rootElem) {
     this.containers = {
         root: rootElem
     };
+    this.handlers = {};
 }
 
 // TODO: define max height and other parameters
@@ -29,6 +30,14 @@ CharmDrawer.prototype.addTypeEntry = function(categoryType, charmDef) {
     cell.className = "categoryCell";
     cell.style.backgroundImage = `url(${charmDef.imgURL})`;
 
+    if (this.handlers[categoryType]) {
+        var fn = this.handlers[categoryType];
+        cell.addEventListener('click', function(evt) {
+            var key = evt.target.getAttribute('data-key');
+            fn.call(null, categoryType, key);
+        });
+    }
+
     cat.appendChild(cell);
 };
 
@@ -36,6 +45,7 @@ CharmDrawer.prototype.addTypeEntry = function(categoryType, charmDef) {
 // fn(type, key) // from gateway scheme, tbdocumented
 // don't really need the type parameter, seemed like it would be nice
 CharmDrawer.prototype.registerTypeHandler = function(categoryType, fn) {
+    this.handlers[categoryType] = fn;
     var cat = this.containers[categoryType];
     var cells = cat.querySelectorAll('.drawerCategory .categoryCell');
     for (var i = 0; i < cells.length; i++) {
