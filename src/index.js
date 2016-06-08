@@ -121,10 +121,10 @@ function buildDrawer(root, gate) {
         //drawer.addTypeEntry('charm', charmHash[charmKey]);
     //});
 
-    debugger;
     drawer.registerTypeHandler('charm', function(type, key) {
-        var def = gate.get(type, key);
-        overlay.displayDefinition(def);
+        gate.get(type, key).then(function(charmDef){
+            overlay.displayDefinition(charmDef);
+        });
     });
 
     overlay.registerDefHandler(function(overlayCharmDef) {
