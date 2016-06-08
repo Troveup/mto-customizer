@@ -38,29 +38,32 @@ var cloudReferences = [
     }
 ];
 
-var testCanvas;
-var overlayContainer = document.getElementById('overlayContainer');
 var gate = new Gateway(); // TODO: figure out cors issue to resume testing
-var overlay = new Overlay(overlayContainer);
+var overlay;
 
-function main() {
+function main(opts) {
     item = new MTOItem('canvas');
-    overlay.buildHTML();
 
+    overlay = new Overlay(opts.overlayContainer);
+    overlay.buildHTML();
     //cloudReferences.map(function(cloudRef) {
         //gate.load(cloudRef);
     //});
 
     item.setBaseChain(hardCodedGateway['chain']['double']);
+
     canvas.addEventListener('mousedown', function(evt) {
         var hit = item.charmClickQuery(evt);
         if (hit) {
-            // should be triggered by clicking charm
             overlay.displayInstance(item.selectedCharm);
         }
     });
     canvas.addEventListener('mouseup', item.handleMouseup.bind(item));
     canvas.addEventListener('mousemove', item.handleMousemove.bind(item), false);
+
+    if (opts.drawerContainer) {
+        MTO.buildDrawer(opts.drawerContainer);
+    }
     loop();
 }
 

@@ -3,8 +3,6 @@ function Gateway() {
     this.cache = Object.create(null);
 }
 
-console.log("woo woo got here");
-
 // fetch item based on cloudRef, add to cache based on type and key and return promise with data
 Gateway.prototype.load = function(ref) {
     var publicURL = `https://storage.googleapis.com/${ref.bucket}/gateway/${ref.type}/${ref.key}/${ref.hash}.json`;

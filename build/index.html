@@ -49,19 +49,19 @@
             <div id="overlayContainer"></div>
         </div>
         <div class="drawerWrapper">
-            <div id="drawerTest"></div>
+            <div id="drawerContainer"></div>
         </div>
     </div>
-    
-    <button onclick="MTO.deleteSelectedCharm();"> Deleted Selected </button>
 
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r73/three.js"></script>
     <script type="text/javascript" src="/box2d_v2.3.1_min.js"></script>
     <script type="text/javascript" src="/assets/MTO.js"></script>
     <script type="text/javascript">
-        MTO.main();
-        var drawerTestElem = document.getElementById('drawerTest');
-        MTO.buildDrawer(drawerTestElem);
+        MTO.main({
+            canvas: document.getElementById('canvas'),
+            overlayContainer: document.getElementById('overlayContainer'),
+            drawerContainer: document.getElementById('drawerContainer')
+        });
     </script>
     <h3>Known Issues</h3>
     <p>Don't delete charms that are connected to other charms</p>
