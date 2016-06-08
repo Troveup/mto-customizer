@@ -6,7 +6,7 @@ var CharmDrawer = require("./charm-drawer.js");
 var Gateway = require('./gateway.js');
 var Overlay = require('./overlay.js');
 
-var hardCodedGateway = require('./hardcoded-gateway.js');
+//var hardCodedGateway = require('./hardcoded-gateway.js');
 
 var DEG_TO_RAD = Math.PI / 180;
 
@@ -44,8 +44,6 @@ function main(opts) {
         }
         return loadPromise;
     });
-    console.log("promiseList");
-    console.log(promiseList);
 
     // TODO: use promises to wait until loading is done before setting initial chain
     if (chainPromise) {
