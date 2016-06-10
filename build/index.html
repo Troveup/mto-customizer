@@ -57,20 +57,65 @@
     <script type="text/javascript" src="/box2d_v2.3.1_min.js"></script>
     <script type="text/javascript" src="/assets/MTO.js"></script>
     <script type="text/javascript">
-        // need to figure out a good way to populate this, likely from the DB
-        var cloudReferences = [
+        function hashCode(str) {
+            var hash = 0, i, chr, len;
+            if (str.length === 0) return hash;
+            for (i = 0, len = str.length; i < len; i++) {
+                chr   = str.charCodeAt(i);
+                hash  = ((hash << 5) - hash) + chr;
+                hash |= 0; // Convert to 32bit integer
+            }
+            return hash;
+        };
+
+        var rawRefObjects = [
             {
-                bucket: 'troveup-dev-private',
-                refType: 'charm',
-                key: 'dev-simple-link',
-                version: 2, // 1,
-                hash: "5854463C046A4AAE1995876B6551534D" // "06610768D189CCCC4C1874B8576DA4A9"
+                "type": "charm",
+                "key": "dev-debug-link",
+                "version": 1,
+                "imgURL": "https://storage.googleapis.com/troveup-dev-private/mto-images/directed-charm-link.png",
+                "width": 1.866666666666667,
+                "height": 5.833333333333333,
+                "anchors": [0, 2.3, 0, -2.3]
+            },
+            {
+                "type": "charm",
+                "key": "dev-simple-link",
+                "version": 2,
+                "imgURL": "https://storage.googleapis.com/troveup-dev-private/mto-images/charm-link.png",
+                "width": 1.866666666666667,
+                "height": 5.833333333333333,
+                "anchors": [0, 2.3, 0, -2.3]
+            },
+            {
+                "key": "dev-single-anchor",
+                "imgURL": "https://storage.googleapis.com/troveup-dev-private/mto-images/demo-chain.png",
+                "type": "chain",
+                "version": 2,
+                "width": 60,
+                "height": 80,
+                "anchors": [ 0.75, -15.5 ]
             }
         ];
+
+        var autoCloudReferences = rawRefObjects.map(function(raw) {
+            var serialized = JSON.stringify(raw);
+            var hash = hashCode(serialized);
+
+            return {
+                bucket: 'troveup-dev-private',
+                type: 'local-reference',
+                refType: raw.type,
+                key: raw.key,
+                hash: hash,
+                content: serialized
+            };
+        });
+
         // https://storage.googleapis.com/troveup-dev-private/gateway/charm/dev-simple-link/5854463C046A4AAE1995876B6551534D.json
 
         MTO.main({
-            referenceList: cloudReferences,
+            referenceList: autoCloudReferences,
             canvas: document.getElementById('canvas'),
             overlayContainer: document.getElementById('overlayContainer'),
             drawerContainer: document.getElementById('drawerContainer')

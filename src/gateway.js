@@ -13,11 +13,16 @@ Gateway.prototype.load = function(ref) {
         typeHash = this.cache[categoryType] = {};
     }
 
-    return fetch(publicURL)
-        .then(function (response) {
-            typeHash[ref.key] = Promise.resolve(response.json());
-            return typeHash[ref.key];
-        });
+    if (ref.type != 'local-reference') {
+        return fetch(publicURL)
+            .then(function (response) {
+                typeHash[ref.key] = Promise.resolve(response.json());
+                return typeHash[ref.key];
+            });
+    } else {
+        typeHash[ref.key] = Promise.resolve(JSON.parse(ref.content));
+        return typeHash[ref.key];
+    }
 };
 
 Gateway.prototype.forTypeEach = function(type, fn) {
