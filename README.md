@@ -19,9 +19,6 @@ if you need distributable for use in another project you can generate it with th
 
 which will place it at `build/MTO.js`.
 
-*Note:* If errors like "Cannot resolve module 'run'" show themselves, try running the 
+Convenience one-liner:
 
-    webpack
-    
-command, first.
-    
+    webpack && cp build/MTO.js ../troveweb/src/main/webapp/WEB-INF/resources/js/MTO.js
