@@ -46,12 +46,9 @@ function main(opts) {
         return loadPromise;
     });
 
-    // TODO: use promises to wait until loading is done before setting initial chain
     if (chainPromise) {
         chainPromise.then(function(chainSpec){
-            console.warn("figure out which chain has just been loaded, set it to base chain");
             item.setBaseChain(chainSpec);
-            //item.setBaseChain(gate.get('chain', 'double'));
         });
     }
 
@@ -92,26 +89,17 @@ function deleteSelectedCharm() {
 function buildDrawer(root, items) {
     console.log(root);
     var drawer = new CharmDrawer(root);
-    //var chainHash = hardCodedGateway['chain'];
-    //Object.keys(chainHash).map(function(chainKey) {
-        //drawer.addTypeEntry('chain', chainHash[chainKey]);
-    //});
 
-    //drawer.registerTypeHandler('chain', function(type, key) {
-        //item.setBaseChain(hardCodedGateway[type][key]);
-    //});
-
-    drawer.defineCategory({
-        title: 'Charms',
-        type: 'charm'
-    });
     drawer.defineCategory({
         title: 'Chains',
         type: 'chain'
     });
+    drawer.defineCategory({
+        title: 'Charms',
+        type: 'charm'
+    });
 
     items.map(function(item) {
-        console.log(item);
         drawer.addTypeEntry(item.type, item);
     });
 
@@ -121,11 +109,16 @@ function buildDrawer(root, items) {
         });
     });
 
-    overlay.registerDefHandler(function(overlayCharmDef) {
+    drawer.registerTypeHandler('chain', function(type, key) {
+        gate.get(type, key).then(function(chainDef){
+            item.setBaseChain(chainDef);
+        });
+    });
+
+    overlay.handleCharmDefinition(function(overlayCharmDef) {
         item.addCharm(overlayCharmDef);
     });
-    overlay.registerInstanceHandler(function(charm) {
-        //item.addCharm(overlayCharmDef);
+    overlay.handleCharmInstanceAction(function(charm) {
         item.deleteSelectedCharm();
     });
 }

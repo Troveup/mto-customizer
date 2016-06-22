@@ -58,10 +58,10 @@ Overlay.prototype.displayInstance = function(charm) {
     this.root.style.display = 'block';
 };
 
-Overlay.prototype.registerDefHandler = function(fn) {
+Overlay.prototype.handleCharmDefinition = function(fn) {
     this.defHandler = fn;
 };
-Overlay.prototype.registerInstanceHandler = function(fn) {
+Overlay.prototype.handleCharmInstanceAction = function(fn) {
     this.instanceHandler = fn;
 };
 
