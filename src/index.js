@@ -5,8 +5,9 @@ var MTOItem = require("./mto-item.js");
 var CharmDrawer = require("./charm-drawer.js");
 var Gateway = require('./gateway.js');
 var Overlay = require('./overlay.js');
+var styles = require('style!css!./styles.css');
 
-//var hardCodedGateway = require('./hardcoded-gateway.js');
+var hardCodedGateway = require('./hardcoded-gateway.js');
 
 var DEG_TO_RAD = Math.PI / 180;
 
@@ -47,15 +48,16 @@ function main(opts) {
 
     // TODO: use promises to wait until loading is done before setting initial chain
     if (chainPromise) {
-        chainPromise.then(function(){
+        chainPromise.then(function(chainSpec){
             console.warn("figure out which chain has just been loaded, set it to base chain");
+            item.setBaseChain(chainSpec);
             //item.setBaseChain(gate.get('chain', 'double'));
         });
     }
 
-    Promise.all(promiseList).then(function() {
+    Promise.all(promiseList).then(function(items) {
         if (opts.drawerContainer) {
-            buildDrawer(opts.drawerContainer, gate);
+            buildDrawer(opts.drawerContainer, items);
         }
     });
 
@@ -87,13 +89,9 @@ function deleteSelectedCharm() {
     item.deleteSelectedCharm();
 }
 
-function buildDrawer(root, gate) {
+function buildDrawer(root, items) {
+    console.log(root);
     var drawer = new CharmDrawer(root);
-    //drawer.defineCategory({
-        //title: 'Chains',
-        //type: 'chain'
-    //});
-
     //var chainHash = hardCodedGateway['chain'];
     //Object.keys(chainHash).map(function(chainKey) {
         //drawer.addTypeEntry('chain', chainHash[chainKey]);
@@ -107,17 +105,15 @@ function buildDrawer(root, gate) {
         title: 'Charms',
         type: 'charm'
     });
-
-    gate.forTypeEach('charm', function(charmPromise) {
-        charmPromise.then(function(charmDef){
-            drawer.addTypeEntry('charm', charmDef);
-        });
+    drawer.defineCategory({
+        title: 'Chains',
+        type: 'chain'
     });
 
-    //var charmHash = hardCodedGateway['charm'];
-    //Object.keys(charmHash).map(function(charmKey) {
-        //drawer.addTypeEntry('charm', charmHash[charmKey]);
-    //});
+    items.map(function(item) {
+        console.log(item);
+        drawer.addTypeEntry(item.type, item);
+    });
 
     drawer.registerTypeHandler('charm', function(type, key) {
         gate.get(type, key).then(function(charmDef){

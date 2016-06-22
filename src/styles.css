@@ -1,0 +1,36 @@
+.canvasWrapper {
+    float: left;
+    position: relative;
+}
+.drawerWrapper {
+    float: left;
+}
+#overlayContainer {
+    position: absolute;
+    width: 100px;
+    border: 1px solid black;
+    top: 0;
+    right: 0;
+}
+#overlayContainer button {
+    display: block;
+    margin: 0 auto 10px;
+}
+
+#canvas {
+    border: 1px solid black;
+}
+.categoryCell {
+    box-sizing: border-box;
+    width: 100px;
+    height: 100px;
+    float: left;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.group:after {
+    content: "";
+    display: table;
+    clear: both;
+}
