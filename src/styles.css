@@ -5,6 +5,10 @@
 .drawerWrapper {
     float: left;
 }
+#drawerContainer {
+    width: 220px;
+    border: 1px solid black;
+}
 #overlayContainer {
     position: absolute;
     width: 100px;
@@ -28,6 +32,7 @@
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
+    margin: 5px;
 }
 .group:after {
     content: "";

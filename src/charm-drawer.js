@@ -1,8 +1,5 @@
 
 function CharmDrawer(rootElem) {
-    rootElem.className = "charmDrawerRoot";
-    rootElem.style.width = "200px";
-    rootElem.style.border = '1px solid black';
     this.containers = {
         root: rootElem
     };
